@@ -1,0 +1,391 @@
+<html>
+    <head>
+        <title>XXXX</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <style>
+            h1.title {
+                text-align:center;
+                font-size: 3.5em;
+                margin: 1em 0;
+            }
+
+            .panel-title .time {
+                float: right;
+            }
+
+            .alert-no-bottom-margin {
+                margin-bottom: 0;
+            }
+
+            .floating-buttons {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="col-xs-12">
+                <h1 class="title">Pladen<b>Fuld</b></h1>
+            </div>
+            <div class="col-xs-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span>PowerUp</span>
+                            <span class="time"><i class="glyphicon glyphicon-time"></i> <span data-timer="600" data-onfinish="powerup">10:00</span></span>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>Beskrivelse her af PwoerUps. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                    <table class="table">
+                        <tbody id="powerups">
+                        </tbody>
+                    </table>
+                    <div class="panel-body hidden">
+                        <div class="alert alert-info alert-no-bottom-margin">
+                            <p>Der er ingen aktive PowerUps</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4" id="teams">
+            </div>
+            <div class="col-xs-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span>Konsekvens</span>
+                            <span class="time"><i class="glyphicon glyphicon-time"></i> <span data-timer="3" data-onfinish="consequence">10:00</span></span>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>Beskrivelse her af konsekvenser. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                    <table class="table">
+                            <tbody id="consequences">
+                            </tbody>
+                        </table>
+                    <div class="panel-body hidden">
+                        <div class="alert alert-info alert-no-bottom-margin">
+                            <p>Der er ingen aktive konsekvenser</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="floating-buttons">
+                <button class="btn btn-primary btn-block" onclick="showConsequence();"><i class="glyphicon glyphicon-screenshot"></i> Kør Konsekvens</button>
+            <button class="btn btn-primary btn-block" onclick="showPowerUp();"><i class="glyphicon glyphicon-cd"></i> Kør PowerUp</button>
+            <button class="btn btn-primary btn-block"><i class="glyphicon glyphicon-th-large"></i> Pladen fuld</button>
+            <button class="btn btn-primary btn-block"><i class="glyphicon glyphicon-screenshot"></i> Giv konsekvens</button>
+            <button class="btn btn-primary btn-block"><i class="glyphicon glyphicon-cd"></i> Giv powerup</button>
+            <button class="btn btn-primary btn-block"  onclick="continueGame()"><i class="glyphicon glyphicon-play"></i> Continue</button>
+            <button class="btn btn-primary btn-block" onclick="pauseGame()"><i class="glyphicon glyphicon-pause"></i> Pause</button>
+        </div>
+        <div id="modal-powerup" class="modal fade modal-powerup" tabindex="-1">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ><span>&times;</span></button>
+                        <h4 class="modal-title">PowerUp</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <img src="/gfx/wheeloffortune.gif"/>
+                            <div class="powerUpText">
+                                <h2></h2>
+                                <div class="well"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Færdig</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="modal-consequence" class="modal fade modal-consequence" tabindex="-1">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ><span>&times;</span></button>
+                        <h4 class="modal-title">Konsekvens</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <img src="/gfx/wheeloffortune.gif"/>
+                            <div class="text">
+                                <h2></h2>
+                                <div class="well"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Færdig</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script>
+            // TODO: Pladen fuld
+            // TODO: Giv konsekevens til bestemt deltager
+            // TODO: Giv powerup til bestemt deltager
+            // TODO: Gem i localstorage
+            // TODO: Setup hold og detalgere
+            // TODO: Restart spil
+            // TODO: Få resten af konsekvenser ind - renskriv og gør sjove + med emojies
+            // TODO: Få resten af powerups ind - renskriv og gør sjove + med emojies
+            // TODO: Lav udfordringer som kommer tilfældigt - timer er skjult
+            // TODO: Lav fysisk plade
+
+
+
+
+
+
+            // Helpers
+            function fancyTimeFormat(time)
+            {   
+                // Hours, minutes and seconds
+                var hrs = ~~(time / 3600);
+                var mins = ~~((time % 3600) / 60);
+                var secs = ~~time % 60;
+
+                // Output like "1:01" or "4:03:59" or "123:03:59"
+                var ret = "";
+
+                if (hrs > 0) {
+                    ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+                }
+
+                ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+                ret += "" + secs;
+                return ret;
+            }
+
+            function replaceAll(str, find, replace) {
+                return str.replace(new RegExp(find, 'g'), replace);
+            }
+
+            var getLocal = (key) => {
+                return null;
+            }
+
+            var getRandomPowerUpTime = () => {
+                return _.random(2,10); 
+            }
+
+            var getRandomConsequenceTime = () => {
+                return _.random(5,15); 
+            }
+
+            var getRandomPlayerFromTeams = (teams) => {
+                const players = _.chain(teams).pluck('players').flatten().value();
+                return getRandomFromList(players);
+            }
+
+            var getRandomPowerUp = (powerups) => {
+                return getRandomFromList(powerups);
+            }
+            var getRandomConsequence = (consequences) => {
+                return getRandomFromList(consequences);
+            }
+
+            var getRandomFromList = (list) => {
+                return list[Math.floor(Math.random()*list.length)];
+            }
+
+            var generateDescription = (description, player, minutes) => {
+                description = replaceAll(description, '{player}', player);
+                description = replaceAll(description, '{minutes}', minutes || '');
+                return description;
+            }
+
+            const getRandomId = () => {
+                return Math.floor((1 + Math.random()) * 0x9999999999999).toString(16);
+            }
+        </script>
+        <script>
+            let _powerUpInterval = getLocal('powerUpInterval') || 600;
+            let _consequenceInterval = getLocal('consequenceInterval') || 600;
+            let _teams = [{"name":"Hold 1","players":["Stefan","Andy","Stephanie"]},{"name":"Hold 2","players":["Dan","ElPatron","Sebastian"]}];
+            let _powerups = [{"name":"Tunge ud af munden","description":"{player} må med denne PowerUp må på et vilkårligt tidspunkt stikke tungen ud af munden. Alle deltagere skal gøre det samme. Sidste deltager til at gøre dette får en konsekvens. Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Bustur","description":"{player} må med denne PowerUp på et vilkårligt tidspunkt vælge 2 andre spillere som skal spille bustur. {player} bestemmer selv hvem der skal gi' og hvem der skal ta' imod ;-) - Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Konge","description":"{player} må med denne PowerUp bestemme XXXXXXXXX. {player} har denne PowerUp i {minutes} minutter","durationActive":true},{"name":"Superman","description":"{player} er med denne PowerUp immun overfor alt - også konger og konsekvenser! {player} har denne PowerUp i {minutes} minutter","durationActive":true}];
+            let _consequences = [{"name":"Lænket makker","description":"{player} skal vælge en makker fra et andet hold. Makkeren skal lænkes med håndjern i {minutes} minutter og gøre det samme som {player}. Drikke, ryge, tisse - alt sammen.","durationActive":true},{"name":"Drik af helvedes til","description":"Førerholdet må bestemme antal tårer {player} af konsekvensen skal drikke - op til at bunde en genstand.","durationActive":false},{"name":"Hånd på ryggen","description":"{player} skal have sin primær hånd bag på ryggen i {minutes} minutter.","durationActive":true},{"name":"Bustur","description":"{player} skal have en bustur. Førerholdet må vælge hvem der skal give busturen.","durationActive":false},{"name":"Ingen tisseri mere","description":"Alle på {player}'s hold må ikke tisse i {minutes} minutter.","durationActive":true},{"name":"Drinks bytteri","description":"Alle på {player}'s hold skal bytte drinks. Førerholdet bestemmer hvem der skal have hvilke drinks.","durationActive":false},{"name":"Slave","description":"{player} skal være slave i {minutes} minutter. Alle andre deltagere må bede slaven om at hente nye provianter mv. - be creative ;-)","durationActive":true},{"name":"Svimmel.dk","description":"Alle på {player}'s skal rejse sig op og dreje 10 gange rundt!","durationActive":false},{"name":"Fars tvunget rygestop","description":"Alle på {player}'s hold må ikke ryge i {minutes} minutter!","durationActive":true}];
+            let _gamePaused = false;
+
+
+            // POWER UP
+            // POWER UP
+            // POWER UP
+            // POWER UP
+            // POWER UP
+            // POWER UP
+            const showPowerUp = () => {
+                $('#modal-powerup').modal('show');
+            }
+
+            $('#modal-powerup').on('show.bs.modal', function (event) {
+                _gamePaused = true;
+                var $modal = $(this);
+                var $powerUpContainer = $modal.find('.powerUpText');
+                $powerUpContainer.hide();
+
+                const player = getRandomPlayerFromTeams(_teams);
+                const powerUp = getRandomPowerUp(_powerups);
+                const powerUpDuration = getRandomPowerUpTime();
+
+                const description = generateDescription(powerUp.description, player, powerUpDuration);
+
+                $powerUpContainer.find('h2').text(player + ' får ' + powerUp.name);
+                $powerUpContainer.find('.well').text(description);
+
+                let $powerupItem = $('<tr><td class="player"></td><td class="powerup"></td><td class="text-right duration"><i class="glyphicon glyphicon-time"></i> <span data-timer></span></td></tr>');
+                $powerupItem.find('td.player').text(player);
+                $powerupItem.find('td.powerup').text(powerUp.name);
+                $powerupItemDuration = $powerupItem.find('td.duration');
+                const id = getRandomId();
+                if (powerUp.durationActive) {
+                    $powerupItemDuration.find('[data-timer]').attr({
+                        'data-timer': powerUpDuration*60,
+                        'data-id': id,
+                        'data-onfinish': 'playerpowerup'
+                    });
+                } else {
+                    let $btn = $('<button class="btn btn-danger"><i class="glyphicon glyphicon-trash"></i></button>');
+                    $btn.attr('data-id', id);
+                    $btn.click(() => {
+                        removePlayerItem(id);
+                    });
+                    $powerupItemDuration.html($btn);
+                }
+
+                $('#powerups').append($powerupItem);
+
+                setTimeout(() => {
+                    $powerUpContainer.slideDown();
+                }, 2000);
+            })
+            $('#modal-powerup').on('hide.bs.modal', function (event) {
+                $('[data-onfinish=powerup]').data('timer', _powerUpInterval);
+                _gamePaused = false;
+            });
+
+            const removePlayerItem = (id) => {
+                $('[data-id=' + id + ']').closest('tr').remove();
+            };
+            
+            
+            
+            
+            
+            // CONSEQUENCES
+            // CONSEQUENCES
+            // CONSEQUENCES
+            // CONSEQUENCES
+            // CONSEQUENCES
+            // CONSEQUENCES
+            // CONSEQUENCES
+            const showConsequence = () => {
+                $('#modal-consequence').modal('show');
+            }
+
+            $('#modal-consequence').on('show.bs.modal', function (event) {
+                _gamePaused = true;
+                var $modal = $(this);
+                var $container = $modal.find('.text');
+                $container.hide();
+
+                const player = getRandomPlayerFromTeams(_teams);
+                const consequence = getRandomConsequence(_consequences);
+                const duration = getRandomConsequenceTime();
+
+                const description = generateDescription(consequence.description, player, duration);
+
+                $container.find('h2').text(player + ' får ' + consequence.name);
+                $container.find('.well').text(description);
+
+                let $item = $('<tr><td class="player"></td><td class="description"></td><td class="text-right duration"><i class="glyphicon glyphicon-time"></i> <span data-timer></span></td></tr>');
+                $item.find('td.player').text(player);
+                $item.find('td.description').text(consequence.name);
+                $itemDuration = $item.find('td.duration');
+                const id = getRandomId();
+                if (consequence.durationActive) {
+                    $itemDuration.find('[data-timer]').attr({
+                        'data-timer': duration*60,
+                        'data-id': id,
+                        'data-onfinish': 'playerconsequence'
+                    });
+                    
+                    $('#consequences').append($item);
+                }
+
+                setTimeout(() => {
+                    $container.slideDown();
+                }, 2000);
+            })
+            $('#modal-consequence').on('hide.bs.modal', function (event) {
+                $('[data-onfinish=consequence]').data('timer', _consequenceInterval);
+                _gamePaused = false;
+            });
+
+            const timerFinished = (type, id) => {
+                switch(type) {
+                    case 'powerup':
+                        showPowerUp();
+                        break;
+                    case 'playerpowerup':
+                        removePlayerItem(id);
+                        break;
+                    case 'consequence':
+                        showConsequence();
+                        break;
+                    case 'playerconsequence':
+                        removePlayerItem(id);
+                        break;
+                }
+            }
+
+            const timerFunction = () => {
+                if (_gamePaused) return;
+                const $timers = $('[data-timer]');
+
+                let currentTime;
+                $.each($timers, (i, item) => {
+                    $item = $(item);
+                    currentTime = parseInt($item.data('timer'));
+                    $item.data('timer', currentTime-1).text(fancyTimeFormat(currentTime));
+                    if (currentTime === 0) timerFinished($item.data('onfinish'), $item.data('id'));
+                });
+            };
+
+            let timer = setInterval(timerFunction, 1000);
+            
+            $(document).ready(() => {
+                const $teamContainer = $('#teams');
+                $.each(_teams, (i, team) => {
+                    const players = team.players;
+
+                    const $panel = $('<div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"></h3></div><div class="panel-body"><ol></ol></div></div>');
+
+                    $panel.find('h3.panel-title').text(team.name);
+                    $ol = $panel.find('ol');
+
+                    $.each(players, (i, player) => {
+                        $ol.append($('<li>').text(player));
+                    });
+                    
+                    $teamContainer.append($panel);
+                });
+            });
+
+            const pauseGame = () => { _gamePaused = true; };
+            const continueGame = () => { _gamePaused = false; };
+        </script>
+    </body>
+</html>

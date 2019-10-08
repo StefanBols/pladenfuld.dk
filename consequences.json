@@ -1,0 +1,47 @@
+[
+    {
+        "name": "Lænket makker",
+        "description": "{player} skal vælge en makker fra et andet hold. Makkeren skal lænkes med håndjern i {minutes} minutter og gøre det samme som {player}. Drikke, ryge, tisse - alt sammen.",
+        "durationActive": true
+    },
+    {
+        "name": "Drik af helvedes til",
+        "description": "Førerholdet må bestemme antal tårer {player} af konsekvensen skal drikke - op til at bunde en genstand.",
+        "durationActive": false
+    },
+    {
+        "name": "Hånd på ryggen",
+        "description": "{player} skal have sin primær hånd bag på ryggen i {minutes} minutter.",
+        "durationActive": true
+    },
+    {
+        "name": "Bustur",
+        "description": "{player} skal have en bustur. Førerholdet må vælge hvem der skal give busturen.",
+        "durationActive": false
+    },
+    {
+        "name": "Ingen tisseri mere",
+        "description": "Alle på {player}'s hold må ikke tisse i {minutes} minutter.",
+        "durationActive": true
+    },
+    {
+        "name": "Drinks bytteri",
+        "description": "Alle på {player}'s hold skal bytte drinks. Førerholdet bestemmer hvem der skal have hvilke drinks.",
+        "durationActive": false
+    },
+    {
+        "name": "Slave",
+        "description": "{player} skal være slave i {minutes} minutter. Alle andre deltagere må bede slaven om at hente nye provianter mv. - be creative ;-)",
+        "durationActive": true
+    },
+    {
+        "name": "Svimmel.dk",
+        "description": "Alle på {player}'s skal rejse sig op og dreje 10 gange rundt!",
+        "durationActive": false
+    },
+    {
+        "name": "Fars tvunget rygestop",
+        "description": "Alle på {player}'s hold må ikke ryge i {minutes} minutter!",
+        "durationActive": true
+    }
+]

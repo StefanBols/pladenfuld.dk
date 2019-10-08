@@ -1,0 +1,22 @@
+[
+    {
+        "name": "Tunge ud af munden",
+        "description": "{player} må med denne PowerUp må på et vilkårligt tidspunkt stikke tungen ud af munden. Alle deltagere skal gøre det samme. Sidste deltager til at gøre dette får en konsekvens. Når PowerUp'en er brugt, skal denne fjernes fra oversigten.",
+        "durationActive": false
+    },
+    {
+        "name": "Bustur",
+        "description": "{player} må med denne PowerUp på et vilkårligt tidspunkt vælge 2 andre spillere som skal spille bustur. {player} bestemmer selv hvem der skal gi' og hvem der skal ta' imod ;-) - Når PowerUp'en er brugt, skal denne fjernes fra oversigten.",
+        "durationActive": false
+    },
+    {
+        "name": "Konge",
+        "description": "{player} må med denne PowerUp bestemme XXXXXXXXX. {player} har denne PowerUp i {minutes} minutter",
+        "durationActive": true
+    },
+    {
+        "name": "Superman",
+        "description": "{player} er med denne PowerUp immun overfor alt - også konger og konsekvenser! {player} har denne PowerUp i {minutes} minutter",
+        "durationActive": true
+    }
+]
