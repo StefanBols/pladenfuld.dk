@@ -38,7 +38,7 @@
                         </h3>
                     </div>
                     <div class="panel-body">
-                        <p>Beskrivelse her af PwoerUps. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        <p>Beskrivelse her af PowerUps. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                     </div>
                     <table class="table">
                         <tbody id="powerups">
@@ -58,7 +58,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             <span>Konsekvens</span>
-                            <span class="time"><i class="glyphicon glyphicon-time"></i> <span data-timer="3" data-onfinish="consequence">10:00</span></span>
+                            <span class="time"><i class="glyphicon glyphicon-time"></i> <span data-timer="300" data-onfinish="consequence">10:00</span></span>
                         </h3>
                     </div>
                     <div class="panel-body">
@@ -77,7 +77,7 @@
             </div>
         </div>
         <div class="floating-buttons">
-                <button class="btn btn-primary btn-block" onclick="showConsequence();"><i class="glyphicon glyphicon-screenshot"></i> Kør Konsekvens</button>
+            <button class="btn btn-primary btn-block" onclick="showConsequence();"><i class="glyphicon glyphicon-screenshot"></i> Kør Konsekvens</button>
             <button class="btn btn-primary btn-block" onclick="showPowerUp();"><i class="glyphicon glyphicon-cd"></i> Kør PowerUp</button>
             <button class="btn btn-primary btn-block"><i class="glyphicon glyphicon-th-large"></i> Pladen fuld</button>
             <button class="btn btn-primary btn-block"><i class="glyphicon glyphicon-screenshot"></i> Giv konsekvens</button>
@@ -133,6 +133,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script>
+            
             // TODO: Pladen fuld
             // TODO: Giv konsekevens til bestemt deltager
             // TODO: Giv powerup til bestemt deltager
@@ -173,10 +174,6 @@
                 return str.replace(new RegExp(find, 'g'), replace);
             }
 
-            var getLocal = (key) => {
-                return null;
-            }
-
             var getRandomPowerUpTime = () => {
                 return _.random(2,10); 
             }
@@ -210,13 +207,108 @@
             const getRandomId = () => {
                 return Math.floor((1 + Math.random()) * 0x9999999999999).toString(16);
             }
+
+            const getTimestamp = () => {
+                return Math.round(Date.now()/1000);
+            }
+
+
+            /// Localstorage
+            const LS_TEAMS = 'Teams';
+            const LS_POWERUPS = 'PowerUpList';
+            const LS_CONSEQUENCES = 'ConsequencesList';
+            const LS_PLAYER_POWERUPS = 'PlayerPowerUpList';
+            const LS_PLAYER_CONSEQUENCES = 'PlayerConsequencesList';
+            const LS_POWERUP_INTERVAL = 'PowerUpInterval';
+            const LS_CONSEQUENCES_INTERVAL = 'ConsequenceInterval';
+
+
+            var localGet = (key) => {
+                return JSON.parse(localStorage.getItem(key));
+            }
+            var localSet = (key, value) => {
+                localStorage.setItem(key, JSON.stringify(value));
+            }
+
+            var localAddItem = (key, rowId, player, duration, description) => {
+                duration = (duration || 0);
+
+                const timestamp = getTimestamp();
+                var item = {
+                    player: player,
+                    duration: duration,
+                    description: description,
+                    rowId: rowId,
+                    timestamp: timestamp,
+                    expires: parseInt(timestamp)+parseInt(duration)
+                }
+                var items = localGet(key) || [];
+                items.push(item);
+                localSet(key, items);
+            }
+
+
+
+
+            // GAME SETTINGS
+            var localGetPowerups = () => {
+                let powers = localGet(LS_POWERUPS);
+                if (!powers || powers.length === 0) {
+                    powers = [{"name":"Tunge ud af munden","description":"{player} må med denne PowerUp må på et vilkårligt tidspunkt stikke tungen ud af munden. Alle deltagere skal gøre det samme. Sidste deltager til at gøre dette får en konsekvens. Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Bustur","description":"{player} må med denne PowerUp på et vilkårligt tidspunkt vælge 2 andre spillere som skal spille bustur. {player} bestemmer selv hvem der skal gi' og hvem der skal ta' imod ;-) - Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Konge","description":"{player} må med denne PowerUp bestemme XXXXXXXXX. {player} har denne PowerUp i {minutes} minutter","durationActive":true},{"name":"Superman","description":"{player} er med denne PowerUp immun overfor alt - også konger og konsekvenser! {player} har denne PowerUp i {minutes} minutter","durationActive":true}];
+                    localSet(LS_POWERUPS, powers);
+                }
+                return powers;
+            }
+            var localGetConsequences = () => {
+                let cons = localGet(LS_CONSEQUENCES);
+                if (!cons || cons.length === 0) {
+                    cons = [{"name":"Lænket makker","description":"{player} skal vælge en makker fra et andet hold. Makkeren skal lænkes med håndjern i {minutes} minutter og gøre det samme som {player}. Drikke, ryge, tisse - alt sammen.","durationActive":true},{"name":"Drik af helvedes til","description":"Førerholdet må bestemme antal tårer {player} af konsekvensen skal drikke - op til at bunde en genstand.","durationActive":false},{"name":"Hånd på ryggen","description":"{player} skal have sin primær hånd bag på ryggen i {minutes} minutter.","durationActive":true},{"name":"Bustur","description":"{player} skal have en bustur. Førerholdet må vælge hvem der skal give busturen.","durationActive":false},{"name":"Ingen tisseri mere","description":"Alle på {player}'s hold må ikke tisse i {minutes} minutter.","durationActive":true},{"name":"Drinks bytteri","description":"Alle på {player}'s hold skal bytte drinks. Førerholdet bestemmer hvem der skal have hvilke drinks.","durationActive":false},{"name":"Slave","description":"{player} skal være slave i {minutes} minutter. Alle andre deltagere må bede slaven om at hente nye provianter mv. - be creative ;-)","durationActive":true},{"name":"Svimmel.dk","description":"Alle på {player}'s skal rejse sig op og dreje 10 gange rundt!","durationActive":false},{"name":"Fars tvunget rygestop","description":"Alle på {player}'s hold må ikke ryge i {minutes} minutter!","durationActive":true}];
+                    localSet(LS_CONSEQUENCES, cons);
+                }
+                return cons;
+            }
+            var localGetTeams = () => {
+                let teams = localGet(LS_TEAMS);
+                if (!teams || teams.length === 0) {
+                    teams = [{"name":"Hold 1","players":["Stefan","Andy","Stephanie"]},{"name":"Hold 2","players":["Dan","ElPatron","Sebastian"]}];
+                    localSet(LS_TEAMS, teams);
+                }
+                return _.sortBy(teams, 'name');
+            }
+
+
+            // GAME PLAY
+            var localAddPowerup = (player, rowId, duration, description) => {
+                localAddItem(LS_PLAYER_POWERUPS, rowId, player, duration, description);
+            }
+            var localAddConsequences = (player, rowId, duration, description) => {
+                localAddItem(LS_PLAYER_CONSEQUENCES, rowId, player, duration, description);
+            }
+            
+            var localGetCurrentPowerups = () => {
+                return _.sortBy(localGet(LS_PLAYER_POWERUPS) || [], 'expires');
+            }
+            var localGetCurrentConsequences = () => {
+                return _.sortBy(localGet(LS_PLAYER_CONSEQUENCES) || [], 'expires');
+            }
+
+            var localRemovePowerUp = (id) => {
+                let powers = localGetCurrentPowerups();
+                powers = _.filter(powers, (x) => { return x.rowId !== id});
+                localSet(LS_PLAYER_POWERUPS, powers);
+            }
+            var localRemoveConsequences = (id) => {
+                let cons = localGetCurrentConsequences();
+                cons = _.filter(cons, (x) => { return x.rowId !== id});
+                localSet(LS_PLAYER_CONSEQUENCES, cons);
+            }
         </script>
         <script>
-            let _powerUpInterval = getLocal('powerUpInterval') || 600;
-            let _consequenceInterval = getLocal('consequenceInterval') || 600;
-            let _teams = [{"name":"Hold 1","players":["Stefan","Andy","Stephanie"]},{"name":"Hold 2","players":["Dan","ElPatron","Sebastian"]}];
-            let _powerups = [{"name":"Tunge ud af munden","description":"{player} må med denne PowerUp må på et vilkårligt tidspunkt stikke tungen ud af munden. Alle deltagere skal gøre det samme. Sidste deltager til at gøre dette får en konsekvens. Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Bustur","description":"{player} må med denne PowerUp på et vilkårligt tidspunkt vælge 2 andre spillere som skal spille bustur. {player} bestemmer selv hvem der skal gi' og hvem der skal ta' imod ;-) - Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Konge","description":"{player} må med denne PowerUp bestemme XXXXXXXXX. {player} har denne PowerUp i {minutes} minutter","durationActive":true},{"name":"Superman","description":"{player} er med denne PowerUp immun overfor alt - også konger og konsekvenser! {player} har denne PowerUp i {minutes} minutter","durationActive":true}];
-            let _consequences = [{"name":"Lænket makker","description":"{player} skal vælge en makker fra et andet hold. Makkeren skal lænkes med håndjern i {minutes} minutter og gøre det samme som {player}. Drikke, ryge, tisse - alt sammen.","durationActive":true},{"name":"Drik af helvedes til","description":"Førerholdet må bestemme antal tårer {player} af konsekvensen skal drikke - op til at bunde en genstand.","durationActive":false},{"name":"Hånd på ryggen","description":"{player} skal have sin primær hånd bag på ryggen i {minutes} minutter.","durationActive":true},{"name":"Bustur","description":"{player} skal have en bustur. Førerholdet må vælge hvem der skal give busturen.","durationActive":false},{"name":"Ingen tisseri mere","description":"Alle på {player}'s hold må ikke tisse i {minutes} minutter.","durationActive":true},{"name":"Drinks bytteri","description":"Alle på {player}'s hold skal bytte drinks. Førerholdet bestemmer hvem der skal have hvilke drinks.","durationActive":false},{"name":"Slave","description":"{player} skal være slave i {minutes} minutter. Alle andre deltagere må bede slaven om at hente nye provianter mv. - be creative ;-)","durationActive":true},{"name":"Svimmel.dk","description":"Alle på {player}'s skal rejse sig op og dreje 10 gange rundt!","durationActive":false},{"name":"Fars tvunget rygestop","description":"Alle på {player}'s hold må ikke ryge i {minutes} minutter!","durationActive":true}];
+            let _powerUpInterval = localGet(LS_POWERUP_INTERVAL) || 600;
+            let _consequenceInterval = localGet(LS_CONSEQUENCES_INTERVAL) || 600;
+            let _teams = localGetTeams();
+            let _powerups = localGetPowerups();
+            let _consequences = localGetConsequences();
             let _gamePaused = false;
 
 
@@ -230,29 +322,14 @@
                 $('#modal-powerup').modal('show');
             }
 
-            $('#modal-powerup').on('show.bs.modal', function (event) {
-                _gamePaused = true;
-                var $modal = $(this);
-                var $powerUpContainer = $modal.find('.powerUpText');
-                $powerUpContainer.hide();
-
-                const player = getRandomPlayerFromTeams(_teams);
-                const powerUp = getRandomPowerUp(_powerups);
-                const powerUpDuration = getRandomPowerUpTime();
-
-                const description = generateDescription(powerUp.description, player, powerUpDuration);
-
-                $powerUpContainer.find('h2').text(player + ' får ' + powerUp.name);
-                $powerUpContainer.find('.well').text(description);
-
+            const addHtmlPowerup = (player, description, duration, id) => {
                 let $powerupItem = $('<tr><td class="player"></td><td class="powerup"></td><td class="text-right duration"><i class="glyphicon glyphicon-time"></i> <span data-timer></span></td></tr>');
                 $powerupItem.find('td.player').text(player);
-                $powerupItem.find('td.powerup').text(powerUp.name);
+                $powerupItem.find('td.powerup').text(description);
                 $powerupItemDuration = $powerupItem.find('td.duration');
-                const id = getRandomId();
-                if (powerUp.durationActive) {
+                if (duration) {
                     $powerupItemDuration.find('[data-timer]').attr({
-                        'data-timer': powerUpDuration*60,
+                        'data-timer': duration,
                         'data-id': id,
                         'data-onfinish': 'playerpowerup'
                     });
@@ -261,14 +338,37 @@
                     $btn.attr('data-id', id);
                     $btn.click(() => {
                         removePlayerItem(id);
+                        localRemovePowerUp(id);
                     });
                     $powerupItemDuration.html($btn);
                 }
 
                 $('#powerups').append($powerupItem);
+            }
 
+            $('#modal-powerup').on('show.bs.modal', function (event) {
+                _gamePaused = true;
+                var $modal = $(this);
+                var $powerUpContainer = $modal.find('.powerUpText');
+                $powerUpContainer.hide();
+
+                const player = getRandomPlayerFromTeams(_teams);
+                const powerUp = getRandomPowerUp(_powerups);
+                let powerUpDuration = getRandomPowerUpTime();
+                let powerUpDurationSec = powerUpDuration*60;
+
+                const description = generateDescription(powerUp.description, player, powerUpDuration);
+
+                $powerUpContainer.find('h2').text(player + ' får ' + powerUp.name);
+                $powerUpContainer.find('.well').text(description);
+
+                if (!powerUp.durationActive) powerUpDurationSec = null;
+                
                 setTimeout(() => {
                     $powerUpContainer.slideDown();
+                    const id = getRandomId();
+                    localAddPowerup(player, id, powerUpDurationSec, powerUp.name);
+                    addHtmlPowerup(player, powerUp.name, powerUpDurationSec, id);
                 }, 2000);
             })
             $('#modal-powerup').on('hide.bs.modal', function (event) {
@@ -291,6 +391,24 @@
             // CONSEQUENCES
             // CONSEQUENCES
             // CONSEQUENCES
+
+
+            const addHtmlConsequence = (player, description, duration, id) => {
+                let $item = $('<tr><td class="player"></td><td class="description"></td><td class="text-right duration"><i class="glyphicon glyphicon-time"></i> <span data-timer></span></td></tr>');
+                $item.find('td.player').text(player);
+                $item.find('td.description').text(description);
+                $itemDuration = $item.find('td.duration');
+                if (duration) {
+                    $itemDuration.find('[data-timer]').attr({
+                        'data-timer': duration,
+                        'data-id': id,
+                        'data-onfinish': 'playerconsequence'
+                    });
+                    
+                    $('#consequences').append($item);
+                }
+            }
+
             const showConsequence = () => {
                 $('#modal-consequence').modal('show');
             }
@@ -303,30 +421,21 @@
 
                 const player = getRandomPlayerFromTeams(_teams);
                 const consequence = getRandomConsequence(_consequences);
-                const duration = getRandomConsequenceTime();
+                let duration = getRandomConsequenceTime();
+                let durationSec = duration*60;
 
                 const description = generateDescription(consequence.description, player, duration);
 
                 $container.find('h2').text(player + ' får ' + consequence.name);
                 $container.find('.well').text(description);
 
-                let $item = $('<tr><td class="player"></td><td class="description"></td><td class="text-right duration"><i class="glyphicon glyphicon-time"></i> <span data-timer></span></td></tr>');
-                $item.find('td.player').text(player);
-                $item.find('td.description').text(consequence.name);
-                $itemDuration = $item.find('td.duration');
-                const id = getRandomId();
-                if (consequence.durationActive) {
-                    $itemDuration.find('[data-timer]').attr({
-                        'data-timer': duration*60,
-                        'data-id': id,
-                        'data-onfinish': 'playerconsequence'
-                    });
-                    
-                    $('#consequences').append($item);
-                }
-
+                if (!consequence.durationActive) durationSec = null;
+                
                 setTimeout(() => {
                     $container.slideDown();
+                    const id = getRandomId();
+                    localAddConsequences(player, id, durationSec, consequence.name);
+                    addHtmlConsequence(player, consequence.name, durationSec, id);
                 }, 2000);
             })
             $('#modal-consequence').on('hide.bs.modal', function (event) {
@@ -339,13 +448,15 @@
                     case 'powerup':
                         showPowerUp();
                         break;
-                    case 'playerpowerup':
-                        removePlayerItem(id);
-                        break;
                     case 'consequence':
                         showConsequence();
                         break;
+                    case 'playerpowerup':
+                        localRemovePowerUp(id);
+                        removePlayerItem(id);
+                        break;
                     case 'playerconsequence':
+                        localRemoveConsequences(id);
                         removePlayerItem(id);
                         break;
                 }
@@ -356,6 +467,7 @@
                 const $timers = $('[data-timer]');
 
                 let currentTime;
+                let $item;
                 $.each($timers, (i, item) => {
                     $item = $(item);
                     currentTime = parseInt($item.data('timer'));
@@ -364,9 +476,10 @@
                 });
             };
 
-            let timer = setInterval(timerFunction, 1000);
             
             $(document).ready(() => {
+                let timer = setInterval(timerFunction, 1000);
+
                 const $teamContainer = $('#teams');
                 $.each(_teams, (i, team) => {
                     const players = team.players;
@@ -381,6 +494,24 @@
                     });
                     
                     $teamContainer.append($panel);
+                });
+
+                let timestamp = getTimestamp();
+                $.each(localGetCurrentConsequences(), (i, item) => {
+                    if (item.expires > timestamp) {
+                        addHtmlConsequence(item.player, item.description, parseInt(item.expires)-timestamp, item.rowId);
+                    } else {
+                        localRemoveConsequences(item.rowId);
+                    }
+                });
+                $.each(localGetCurrentPowerups(), (i, item) => {
+                    if (item.duration === 0) {
+                        addHtmlPowerup(item.player, item.description, 0, item.rowId);
+                    } else if (item.expires > timestamp) {
+                        addHtmlPowerup(item.player, item.description, parseInt(item.expires)-timestamp, item.rowId);
+                    } else {
+                        localRemovePowerUp(item.rowId);
+                    }
                 });
             });
 
