@@ -22,6 +22,12 @@
                 bottom: 10px;
                 right: 10px;
             }
+
+            .control-label {
+                margin-top: 0px;
+                margin-bottom: 0px;
+                padding-top: 7px;
+            }
         </style>
     </head>
     <body>
@@ -79,7 +85,7 @@
         <div class="floating-buttons">
             <button class="btn btn-primary btn-block" onclick="showConsequence();"><i class="glyphicon glyphicon-screenshot"></i> Kør Konsekvens</button>
             <button class="btn btn-primary btn-block" onclick="showPowerUp();"><i class="glyphicon glyphicon-cd"></i> Kør PowerUp</button>
-            <button class="btn btn-primary btn-block"><i class="glyphicon glyphicon-th-large"></i> Pladen fuld</button>
+            <button class="btn btn-primary btn-block" onclick="showPlate();"><i class="glyphicon glyphicon-th-large"></i> Pladen fuld</button>
             <button class="btn btn-primary btn-block"><i class="glyphicon glyphicon-screenshot"></i> Giv konsekvens</button>
             <button class="btn btn-primary btn-block"><i class="glyphicon glyphicon-cd"></i> Giv powerup</button>
             <button class="btn btn-primary btn-block"  onclick="continueGame()"><i class="glyphicon glyphicon-play"></i> Continue</button>
@@ -129,21 +135,54 @@
                 </div>
             </div>
         </div>
+        <div id="modal-plate" class="modal fade modal-consequence" tabindex="-1">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ><span>&times;</span></button>
+                        <h4 class="modal-title">Pladen<b>Fuld</b></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-xs-4">
+                                        <label class="control-label">Vælg hold</label>
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <select class="form-control" id="ModalPlateSelectedTeam"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="well" style="margin-top: 15px;">
+                                        Alle deltagere på holdet får en power up i 10 minutter. Alle pladerne skal ryddes.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Færdig</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script>
             
-            // TODO: Pladen fuld
+            // TODO: Lav udfordringer som kommer tilfældigt - timer er skjult
             // TODO: Giv konsekevens til bestemt deltager
             // TODO: Giv powerup til bestemt deltager
-            // TODO: Reset localstorage
-            // TODO: Setup hold og detalgere
-            // TODO: Restart spil
             // TODO: Få resten af konsekvenser ind - renskriv og gør sjove + med emojies
             // TODO: Få resten af powerups ind - renskriv og gør sjove + med emojies
-            // TODO: Lav udfordringer som kommer tilfældigt - timer er skjult
-            // TODO: Lav fysisk plade
+            // TODO: Konsekvenser og powerup hvor man kan tage fra holds plade
+            // TODO: Setup hold og detalgere
+            // TODO: Reset localstorage
+            // TODO: Restart spil
 
 
 
@@ -270,7 +309,7 @@
             var localGetTeams = () => {
                 let teams = localGet(LS_TEAMS);
                 if (!teams || teams.length === 0) {
-                    teams = [{"name":"Hold 1","players":["Stefan","Andy","Stephanie"]},{"name":"Hold 2","players":["Dan","ElPatron","Sebastian"]}];
+                    teams = [{"id":"jKLNFjlkdsfsdf", "name":"Hold 1","players":["Stefan","Andy","Stephanie"]},{"id":"FGHFDGHdfdsSs", "name":"Hold 2","players":["Dan","ElPatron","Sebastian"]}];
                     localSet(LS_TEAMS, teams);
                 }
                 return _.sortBy(teams, 'name');
@@ -312,6 +351,57 @@
             let _gamePaused = false;
 
 
+
+
+
+
+
+
+
+            // PLATE
+            // PLATE
+            // PLATE
+            // PLATE
+            // PLATE
+            // PLATE
+            const showPlate = () => {
+                $('#modal-plate').modal('show');
+            }
+            $('#modal-plate').on('show.bs.modal', function (event) {
+                _gamePaused = true;
+                var $modal = $(this);
+
+
+                $.each(_teams, (i, team) => {
+                    $('#ModalPlateSelectedTeam').append(`<option value="${team.id}"> ${team.name}</option>`);
+                });
+            });
+            $('#modal-plate').on('hide.bs.modal', function (event) {
+                // Power ups durations = 10 minutes
+                const chosenTeam = $('#ModalPlateSelectedTeam').val();
+
+                const players = _.filter(_teams, (team) => {
+                    return team.id == chosenTeam;
+                })[0].players;
+
+                $.each(players, (i, player) => {
+                    setTimeout(() => {
+                        const powerUp = getRandomPowerUp(_.filter(_powerups, (pw) => { return pw.durationActive; })); // Only take powerups that have a duration
+                        givePowerup(player, powerUp.durationActive ? 600 : 0, powerUp.name);
+                    }, 250);
+                });
+
+                $('#ModalPlateSelectedTeam').val('');
+                $('#ModalPlateSelectedTeam').html('');
+                _gamePaused = false;
+            });
+
+
+
+
+
+
+
             // POWER UP
             // POWER UP
             // POWER UP
@@ -320,6 +410,12 @@
             // POWER UP
             const showPowerUp = () => {
                 $('#modal-powerup').modal('show');
+            }
+
+            const givePowerup = (player, duration, description) => {
+                const id = getRandomId();
+                localAddPowerup(player, id, duration, description);
+                addHtmlPowerup(player, description, duration, id);
             }
 
             const addHtmlPowerup = (player, description, duration, id) => {
@@ -366,9 +462,7 @@
                 
                 setTimeout(() => {
                     $powerUpContainer.slideDown();
-                    const id = getRandomId();
-                    localAddPowerup(player, id, powerUpDurationSec, powerUp.name);
-                    addHtmlPowerup(player, powerUp.name, powerUpDurationSec, id);
+                    givePowerup(player, powerUpDurationSec, powerUp.name);
                 }, 2000);
             })
             $('#modal-powerup').on('hide.bs.modal', function (event) {
