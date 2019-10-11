@@ -28,6 +28,16 @@
                 margin-bottom: 0px;
                 padding-top: 7px;
             }
+
+
+            .countdown {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .countdown span {
+                font-size: 10em;
+            }
         </style>
     </head>
     <body>
@@ -179,6 +189,7 @@
                     <div class="modal-body">
                         <h2></h2>
                         <div class="well"></div>
+                        <div class="countdown"><span></span></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-dismiss="modal">Færdig</button>
@@ -217,13 +228,13 @@
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-        <script>
-            // TODO: Få resten af konsekvenser ind - renskriv og gør sjove + med emojies
-            // TODO: Få resten af powerups ind - renskriv og gør sjove + med emojies
+        <script>            
             // TODO: Konsekvenser og powerup hvor man kan tage fra holds plade
+            // TODO: Kun én konsekvens af durationActive false af gangen. Den gamle erstattes med den nye
             // TODO: Setup hold og detalgere
             // TODO: Reset localstorage
             // TODO: Restart spil
+            // TODO: Ret i konsekvenser, powerups og udfordringer
 
 
 
@@ -275,6 +286,10 @@
                 return getRandomFromList(players);
             }
 
+            const getRandomTeam = (teams) => {
+                return getRandomFromList(teams);
+            }
+
             var getRandomPowerUp = (powerups) => {
                 return getRandomFromList(powerups);
             }
@@ -290,9 +305,10 @@
                 return list[Math.floor(Math.random()*list.length)];
             }
 
-            var generateDescription = (description, player, minutes) => {
-                description = replaceAll(description, '{player}', player);
+            var generateDescription = (description, player, minutes, team) => {
+                description = replaceAll(description, '{player}', player || '');
                 description = replaceAll(description, '{minutes}', minutes || '');
+                description = replaceAll(description, '{team}', team || '');
                 return description;
             }
 
@@ -347,7 +363,7 @@
             var localGetPowerups = () => {
                 let powers = localGet(LS_POWERUPS);
                 if (!powers || powers.length === 0) {
-                    powers = [{"name":"Tunge ud af munden","description":"{player} må med denne PowerUp må på et vilkårligt tidspunkt stikke tungen ud af munden. Alle deltagere skal gøre det samme. Sidste deltager til at gøre dette får en konsekvens. Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Bustur","description":"{player} må med denne PowerUp på et vilkårligt tidspunkt vælge 2 andre spillere som skal spille bustur. {player} bestemmer selv hvem der skal gi' og hvem der skal ta' imod ;-) - Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Konge","description":"{player} må med denne PowerUp bestemme XXXXXXXXX. {player} har denne PowerUp i {minutes} minutter","durationActive":true},{"name":"Superman","description":"{player} er med denne PowerUp immun overfor alt - også konger og konsekvenser! {player} har denne PowerUp i {minutes} minutter","durationActive":true}];
+                    powers = [{"name":"Tunge ud af munden","description":"<b>{player}</b> må med denne PowerUp må på et vilkårligt tidspunkt stikke tungen ud af munden. Alle deltagere skal gøre det samme. Sidste deltager til at gøre dette får en konsekvens. <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Bustur","description":"<b>{player}</b> må med denne PowerUp på et vilkårligt tidspunkt vælge 2 andre spillere som skal spille bustur. <b>{player}</b> bestemmer selv hvem der skal gi' og hvem der skal ta' imod ;-) - <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Konge","description":"<b>{player}</b> må med denne PowerUp bestemme XXXXXXXXX. <b>{player}</b> har denne PowerUp i <b>{minutes} minutter</b>","durationActive":true},{"name":"Superman","description":"<b>{player}</b> er med denne PowerUp immun overfor alt - også konger og konsekvenser! <b>{player}</b> har denne PowerUp i <b>{minutes} minutter</b>","durationActive":true},{"name":"Superman","description":"<b>{player}</b> er med denne PowerUp immun overfor alt - også konger og konsekvenser! <b>{player}</b> har denne PowerUp i <b>{minutes} minutter</b>","durationActive":true},{"name":"Bartenderen","description":"<b>{player}</b> må give en ny drink efter eget valg til en anden deltager. <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Regelrytteren","description":"<b>{player}</b> må give en konsekvens ud til et uskyldigt offer. <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Brandmanden","description":"<b>{player}</b> må give et ordenligt skyld til en anden deltager. <b>{player}</b> bestemmer antal tårer op til en bunder. <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Tyvknægten","description":"<b>{player}</b> må tage 2 genstande fra et modstanderholds plade. <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false}];
                     localSet(LS_POWERUPS, powers);
                 }
                 return powers;
@@ -355,7 +371,7 @@
             var localGetConsequences = () => {
                 let cons = localGet(LS_CONSEQUENCES);
                 if (!cons || cons.length === 0) {
-                    cons = [{"name":"Lænket makker","description":"{player} skal vælge en makker fra et andet hold. Makkeren skal lænkes med håndjern i {minutes} minutter og gøre det samme som {player}. Drikke, ryge, tisse - alt sammen.","durationActive":true},{"name":"Drik af helvedes til","description":"Førerholdet må bestemme antal tårer {player} af konsekvensen skal drikke - op til at bunde en genstand.","durationActive":false},{"name":"Hånd på ryggen","description":"{player} skal have sin primær hånd bag på ryggen i {minutes} minutter.","durationActive":true},{"name":"Bustur","description":"{player} skal have en bustur. Førerholdet må vælge hvem der skal give busturen.","durationActive":false},{"name":"Ingen tisseri mere","description":"Alle på {player}'s hold må ikke tisse i {minutes} minutter.","durationActive":true},{"name":"Drinks bytteri","description":"Alle på {player}'s hold skal bytte drinks. Førerholdet bestemmer hvem der skal have hvilke drinks.","durationActive":false},{"name":"Slave","description":"{player} skal være slave i {minutes} minutter. Alle andre deltagere må bede slaven om at hente nye provianter mv. - be creative ;-)","durationActive":true},{"name":"Svimmel.dk","description":"Alle på {player}'s skal rejse sig op og dreje 10 gange rundt!","durationActive":false},{"name":"Fars tvunget rygestop","description":"Alle på {player}'s hold må ikke ryge i {minutes} minutter!","durationActive":true}];
+                    cons = [{"name":"Lænket makker","description":"<b>{player}</b> skal vælge en makker fra et andet hold. Makkeren skal lænkes med håndjern i <b>{minutes} minutter</b> og gøre det samme som {player}. Drikke, ryge, tisse - alt sammen.","durationActive":true},{"name":"Drik af helvedes til","description":"Førerholdet må bestemme antal tårer <b>{player}</b> af konsekvensen skal drikke - op til at bunde en genstand.","durationActive":false},{"name":"Hånd på ryggen","description":"<b>{player}</b> skal have sin primær hånd bag på ryggen i <b>{minutes} minutter</b>.","durationActive":true},{"name":"Bustur","description":"<b>{player}</b> skal have en bustur. Førerholdet må vælge hvem der skal give busturen.","durationActive":false},{"name":"Ingen tisseri mere","description":"Alle på <b>{team}</b> må ikke tisse i <b>{minutes} minutter</b>.","durationActive":true},{"name":"Drinks bytteri","description":"Alle på <b>{team}</b> skal bytte drinks. Førerholdet bestemmer hvem der skal have hvilke drinks.","durationActive":false},{"name":"Slave","description":"<b>{player}</b> skal være slave i <b>{minutes} minutter</b>. Alle andre deltagere må bede slaven om at hente nye provianter mv. - be creative ;-)","durationActive":true},{"name":"Svimmel.dk","description":"<b>{player}</b> skal rejse sig op og dreje 10 gange rundt!","durationActive":false},{"name":"Fars tvunget rygestop","description":"<b>{player}</b> må ikke ryge i <b>{minutes} minutter</b>!","durationActive":true},{"name":"Krammetid","description":"<b>{player}</b> skal gå hen til hver en deltager og enkeltvis skåle og kramme med dem.","durationActive":false},{"name":"Flyv, opsparing, flyyv...","description":"<b>{team}</b> skal fjerne 2 genstande fra deres plade.","durationActive":false}];
                     localSet(LS_CONSEQUENCES, cons);
                 }
                 return cons;
@@ -363,7 +379,7 @@
             var localGetTeams = () => {
                 let teams = localGet(LS_TEAMS);
                 if (!teams || teams.length === 0) {
-                    teams = [{"id":"jKLNFjlkdsfsdf", "name":"Hold 1","players":["Stefan","Andy","Stephanie"]},{"id":"FGHFDGHdfdsSs", "name":"Hold 2","players":["Dan","ElPatron","Sebastian"]}];
+                    teams = [{"id":"jKLNFjlkdsfsdf", "name":"Hold 1","players":["Stefan","Dan"]},{"id":"FGHFDGHdfdsSs", "name":"Hold 2","players":["Andy","Stephanie"]},{"id":"FGHFDGHdy6htg", "name":"Hold 2","players":["ElPatron","Anja"]}];
                     localSet(LS_TEAMS, teams);
                 }
                 return _.sortBy(teams, 'name');
@@ -371,7 +387,7 @@
             var localGetChallenges = () => {
                 let challenges = localGet(LS_CHALLENGES);
                 if (!challenges || teams.length === 0) {
-                    challenges = [{"id":"1", "name": "Name 1", "description": "Description of challenge 1!"},{"id":"2", "name": "Name 2", "description": "Description of challenge 2!"},{"id":"3", "name": "Name 3", "description": "Description of challenge 3!"}]
+                    challenges = [{"id":"XXXXXX1","name":"Hæld for satan!","description":"<b>{player}</b> skal bunde sin drink på inden denne tæller er færdig. Ellers er der konsekvenser!","countdown":5},{"id":"XXXXXX2","name":"Pladen skal fyldes!","description":"Alle på <b>{team}</b> skal bunde","countdown":0},{"id":"XXXXXX3","name":"Anti-telefoni","description":"Alle skal lægge deres telefoner i vindueskarmen. Konsekvenser til den sidste. Powerup til den første","countdown":0},{"id":"XXXXXX4","name":"Bottoms up","description":"<b>{player}</b> skal stå på sine hænder inden denne tæller er færdig. Må gerne hjælpes.","countdown":10},{"id":"XXXXXX5","name":"SKÅÅÅL!","description":"Så er der shots til alle!","countdown":0},{"id":"XXXXXX6","name":"Kollektiv rygepause","description":"Titlen siger sig selv, bøv!","countdown":0},{"id":"XXXXXX7","name":"Medusa!","description":"<p>Alle sidder rundt om et bord fyldt med shots.<br>Når I er klar, skal I placere panden på bordet, så I ikke kan se hinanden.<br>Tæl til tre og kig så op på samme tid.<br>I skal øjeblikkeligt stirre på en anden person.</p><p>Hvis personen, du stirrer på, kigger på en anden, er du I sikkerhed.<br>Hvis personen, du kigger på, også kigger på dig, skal du <b>råbe Medusa</b> før hende. <br><br><i>Den, der råber det sidst, tager et shot.</i></p>","countdown":0},{"id":"XXXXXX8","name":"Grine-tid","description":"<p><b>{player}</b> skal skrive en besked som sidemanden ikke kan læse højt uden at grine.</p> <p>Konsekvens til den som fejler</p>","countdown":0},{"id":"XXXXXX9","name":"Siamesiske tvillinger","description":"<p>Alle skriver en kropsdel på et stykke papir, for eksempel næse, mund, fod eller lillefinger. Alle trækker en seddel og danner par (tilfældigt) med en anden. I skal nu “fastgøre” de to kropsdele, I trak, for eksempel øre mod knæ, I så lang tid, I kan.</p><p>Når nogen glider fra partneren, skal de drikke et shot, og sådan fortsætter I, indtil der kun er et par tilbage.</p><p><b> Spillet fortsætter imens denne udfordring er i gang<b></b>","countdown":0},{"id":"XXXXXX10","name":"Most likely","description":"<p><b>{player}</b> stiller et <i>most likely</i>-spørgsmål. “Hvem scorer i aften?”, “Hvem ville stjæle en kollegas cola fra køleskabet?”</p><p>Tæl til tre, og peg på den person, I mener er most likely. Man skal drikke en tår for hver person, der peger på én.</p>","countdown":0},{"id":"XXXXXX11","name":"Snurretop","description":"<b>{team}</b> op og snurre rundt 20 gange","countdown":0}];
                 }
 
                 return challenges;
@@ -410,7 +426,7 @@
             const _teams = localGetTeams();
             const _powerups = localGetPowerups();
             const _consequences = localGetConsequences();
-            const _challenges = localGetChallenges();
+            let _challenges = localGetChallenges();
             let _gamePaused = false;
 
             // GIVEOUT
@@ -476,16 +492,40 @@
             const showChallenge = () => {
                 $('#modal-challenge').modal('show');
             }
+            let _challengeCountdown;
             $('#modal-challenge').on('show.bs.modal', function (event) {
                 _gamePaused = true;
                 const $modal = $(this);
+                if (!_challenges || _challenges.length === 0) _challenges = localGetChallenges();
                 const challenge = getRandomChallenges(_challenges);
 
-                $modal.find('h2').text(challenge.name); 
-                $modal.find('.well').text(challenge.description); 
+                $modal.find('h2').text(challenge.name);
+
+                const player = getRandomPlayerFromTeams(_teams);
+                const team = getRandomTeam(_teams);
+
+                const description = generateDescription(challenge.description, player, null, team.name);
+
+                $modal.find('.well').html(description); 
+
+                if (challenge.countdown) {
+                    $modal.find('.countdown span').text(challenge.countdown);
+                    clearInterval(_challengeCountdown);
+                    _challengeCountdown = setInterval(() => {
+                        const count = parseInt($modal.find('.countdown span').text())-1;
+                        if (count <= 0) clearInterval(_challengeCountdown);
+                        $modal.find('.countdown span').text(count);
+                    }, 1000);
+                } else {
+                    $modal.find('.countdown span').text('');
+                }
+
+
+                _challenges = _.filter(_challenges, (x) => { return x.id !== challenge.id});
             });
             $('#modal-challenge').on('hide.bs.modal', function (event) {
                 setChallengeInterval();
+                clearInterval(_challengeCountdown);
                 _gamePaused = false;
             });
             const setChallengeInterval = () => {
@@ -592,20 +632,21 @@
 
                 const player = $modal.data('player') || getRandomPlayerFromTeams(_teams);
                 const powerUp = getRandomPowerUp(_powerups);
+                const team = getRandomTeam(_teams);
                 let powerUpDuration = getRandomPowerUpTime();
                 let powerUpDurationSec = powerUpDuration*60;
 
-                const description = generateDescription(powerUp.description, player, powerUpDuration);
+                const description = generateDescription(powerUp.description, player, powerUpDuration, team.name);
 
                 $powerUpContainer.find('h2').text(player + ' får ' + powerUp.name);
-                $powerUpContainer.find('.well').text(description);
+                $powerUpContainer.find('.well').html(description);
 
                 if (!powerUp.durationActive) powerUpDurationSec = null;
                 
                 setTimeout(() => {
                     $powerUpContainer.slideDown();
                     givePowerup(player, powerUpDurationSec, powerUp.name);
-                }, 2000);
+                }, 2);
             })
             $('#modal-powerup').on('hide.bs.modal', function (event) {
                 $(this).data('player', '');
@@ -658,14 +699,15 @@
                 $container.hide();
 
                 const player = $modal.data('player') || getRandomPlayerFromTeams(_teams);
+                const team = getRandomTeam(_teams);
                 const consequence = getRandomConsequence(_consequences);
                 let duration = getRandomConsequenceTime();
                 let durationSec = duration*60;
 
-                const description = generateDescription(consequence.description, player, duration);
+                const description = generateDescription(consequence.description, player, duration, team.name);
 
                 $container.find('h2').text(player + ' får ' + consequence.name);
-                $container.find('.well').text(description);
+                $container.find('.well').html(description);
 
                 if (!consequence.durationActive) durationSec = null;
                 
@@ -674,7 +716,7 @@
                     const id = getRandomId();
                     localAddConsequences(player, id, durationSec, consequence.name);
                     addHtmlConsequence(player, consequence.name, durationSec, id);
-                }, 2000);
+                }, 2);
             })
             $('#modal-consequence').on('hide.bs.modal', function (event) {
                 $(this).data('player', '');
