@@ -86,8 +86,8 @@
             <button class="btn btn-primary btn-block" onclick="showConsequence();"><i class="glyphicon glyphicon-screenshot"></i> Kør Konsekvens</button>
             <button class="btn btn-primary btn-block" onclick="showPowerUp();"><i class="glyphicon glyphicon-cd"></i> Kør PowerUp</button>
             <button class="btn btn-primary btn-block" onclick="showPlate();"><i class="glyphicon glyphicon-th-large"></i> Pladen fuld</button>
-            <button class="btn btn-primary btn-block"><i class="glyphicon glyphicon-screenshot"></i> Giv konsekvens</button>
-            <button class="btn btn-primary btn-block"><i class="glyphicon glyphicon-cd"></i> Giv powerup</button>
+            <button class="btn btn-primary btn-block" onclick="showGiveout('consequence')"><i class="glyphicon glyphicon-screenshot"></i> Giv konsekvens</button>
+            <button class="btn btn-primary btn-block" onclick="showGiveout('powerup')"><i class="glyphicon glyphicon-cd"></i> Giv powerup</button>
             <button class="btn btn-primary btn-block"  onclick="continueGame()"><i class="glyphicon glyphicon-play"></i> Continue</button>
             <button class="btn btn-primary btn-block" onclick="pauseGame()"><i class="glyphicon glyphicon-pause"></i> Pause</button>
         </div>
@@ -187,13 +187,37 @@
             </div>
         </div>
         <div class="hidden" data-timer="1" data-onfinish="challenge"></div>
+        <div id="modal-giveout" class="modal fade modal-giveout" tabindex="-1">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-xs-4">
+                                        <label class="control-label">Vælg deltager</label>
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <select class="form-control" id="ModalGiveOutPlayers"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Færdig</button>
+                    </div> 
+                </div>
+            </div>
+        </div>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script>
-            
-            // TODO: Giv konsekevens til bestemt deltager
-            // TODO: Giv powerup til bestemt deltager
             // TODO: Få resten af konsekvenser ind - renskriv og gør sjove + med emojies
             // TODO: Få resten af powerups ind - renskriv og gør sjove + med emojies
             // TODO: Konsekvenser og powerup hvor man kan tage fra holds plade
@@ -242,8 +266,12 @@
                 return _.random(10,30); 
             }
 
+            var getAllPlayersInGame = (teams) => {
+                return _.chain(teams).pluck('players').flatten().value();
+            }
+
             var getRandomPlayerFromTeams = (teams) => {
-                const players = _.chain(teams).pluck('players').flatten().value();
+                const players = getAllPlayersInGame(teams);
                 return getRandomFromList(players);
             }
 
@@ -258,6 +286,7 @@
             }
 
             var getRandomFromList = (list) => {
+                list = [...list, ...list, ...list, ...list, ...list, ...list, ...list, ...list];
                 return list[Math.floor(Math.random()*list.length)];
             }
 
@@ -384,6 +413,60 @@
             const _challenges = localGetChallenges();
             let _gamePaused = false;
 
+            // GIVEOUT
+            // GIVEOUT
+            // GIVEOUT
+            // GIVEOUT
+            // GIVEOUT
+            // GIVEOUT
+            // GIVEOUT
+            const showGiveout = (type) => {
+                if (!type) return;
+                $('#modal-giveout').data('giveout-type', type);
+                $('#modal-giveout').modal('show');
+            }
+            $('#modal-giveout').on('show.bs.modal', function (event) {
+                _gamePaused = true;
+                var $modal = $(this);
+
+                let title;
+                switch($modal.data('giveout-type')) {
+                    case 'powerup': title = 'Giv PowerUp'; break;
+                    case 'consequence': title = 'Giv konsekvens'; break;
+                }
+
+
+                $modal.find('.modal-title').text(title);
+
+                $.each(getAllPlayersInGame(_teams), (i, player) => {
+                    $('#ModalGiveOutPlayers').append(`<option value="${player}"> ${player}</option>`);
+                });
+            });
+            $('#modal-giveout').on('hide.bs.modal', function (event) {
+                const chosenPlayer = $('#ModalGiveOutPlayers').val();
+                const $modal = $(this);
+                const type = $modal.data('giveout-type');
+
+                if (type === 'powerup') {
+                    showPowerUp(chosenPlayer);
+                }
+                if (type === 'consequence') {
+                    showConsequence(chosenPlayer);
+                }
+
+                $modal.data('giveout-type', '');
+                $('#ModalGiveOutPlayers').val('');
+                $('#ModalGiveOutPlayers').html('');
+                _gamePaused = false;
+            });
+
+
+
+
+
+
+
+
             // CHALLENGE
             // CHALLENGE
             // CHALLENGE
@@ -466,7 +549,8 @@
             // POWER UP
             // POWER UP
             // POWER UP
-            const showPowerUp = () => {
+            const showPowerUp = (player) => {
+                if (player) $('#modal-powerup').data('player', player);
                 $('#modal-powerup').modal('show');
             }
 
@@ -506,7 +590,7 @@
                 var $powerUpContainer = $modal.find('.powerUpText');
                 $powerUpContainer.hide();
 
-                const player = getRandomPlayerFromTeams(_teams);
+                const player = $modal.data('player') || getRandomPlayerFromTeams(_teams);
                 const powerUp = getRandomPowerUp(_powerups);
                 let powerUpDuration = getRandomPowerUpTime();
                 let powerUpDurationSec = powerUpDuration*60;
@@ -524,6 +608,7 @@
                 }, 2000);
             })
             $('#modal-powerup').on('hide.bs.modal', function (event) {
+                $(this).data('player', '');
                 $('[data-onfinish=powerup]').data('timer', _powerUpInterval);
                 _gamePaused = false;
             });
@@ -561,7 +646,8 @@
                 }
             }
 
-            const showConsequence = () => {
+            const showConsequence = (player) => {
+                if (player) $('#modal-consequence').data('player', player);
                 $('#modal-consequence').modal('show');
             }
 
@@ -571,7 +657,7 @@
                 var $container = $modal.find('.text');
                 $container.hide();
 
-                const player = getRandomPlayerFromTeams(_teams);
+                const player = $modal.data('player') || getRandomPlayerFromTeams(_teams);
                 const consequence = getRandomConsequence(_consequences);
                 let duration = getRandomConsequenceTime();
                 let durationSec = duration*60;
@@ -591,6 +677,7 @@
                 }, 2000);
             })
             $('#modal-consequence').on('hide.bs.modal', function (event) {
+                $(this).data('player', '');
                 $('[data-onfinish=consequence]').data('timer', _consequenceInterval);
                 _gamePaused = false;
             });
