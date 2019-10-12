@@ -674,7 +674,7 @@
                 setTimeout(() => {
                     $powerUpContainer.slideDown();
                     givePowerup(player, powerUpDurationSec, powerUp.name);
-                }, 2);
+                }, 2000);
             })
             $('#modal-powerup').on('hide.bs.modal', function (event) {
                 $(this).data('player', '');
@@ -744,7 +744,7 @@
                     const id = getRandomId();
                     localAddConsequences(player, id, durationSec, consequence.name);
                     addHtmlConsequence(player, consequence.name, durationSec, id);
-                }, 2);
+                }, 2000);
             })
             $('#modal-consequence').on('hide.bs.modal', function (event) {
                 $(this).data('player', '');
