@@ -1,65 +1,836 @@
-<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+    <head>
+        <title>XXXX</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <style>
+            h1.title {
+                text-align:center;
+                font-size: 3.5em;
+                margin: 1em 0;
+            }
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/7.1.0/firebase-app.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/7.1.0/firebase-auth.js"></script>
-    <script defer src="/__/firebase/7.1.0/firebase-database.js"></script>
-    <script defer src="/__/firebase/7.1.0/firebase-messaging.js"></script>
-    <script defer src="/__/firebase/7.1.0/firebase-storage.js"></script>
-    <!-- initialize the SDK after all desired features are loaded -->
-    <script defer src="/__/firebase/init.js"></script>
+            .panel-title .time {
+                float: right;
+            }
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
-    </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+            .alert-no-bottom-margin {
+                margin-bottom: 0;
+            }
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+            .floating-buttons {
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+            }
 
-        try {
-          let app = firebase.app();
-          let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
-          document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-        }
-      });
-    </script>
-  </body>
+            .control-label {
+                margin-top: 0px;
+                margin-bottom: 0px;
+                padding-top: 7px;
+            }
+
+
+            .countdown {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .countdown span {
+                font-size: 10em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="col-xs-12">
+                <h1 class="title">Pladen<b>Fuld</b></h1>
+            </div>
+            <div class="col-xs-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span>PowerUp</span>
+                            <span class="time"><i class="glyphicon glyphicon-time"></i> <span data-timer="600" data-onfinish="powerup">10:00</span></span>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>Beskrivelse her af PowerUps. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                    <table class="table">
+                        <tbody id="powerups">
+                        </tbody>
+                    </table>
+                    <div class="panel-body hidden">
+                        <div class="alert alert-info alert-no-bottom-margin">
+                            <p>Der er ingen aktive PowerUps</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-4" id="teams">
+            </div>
+            <div class="col-xs-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span>Konsekvens</span>
+                            <span class="time"><i class="glyphicon glyphicon-time"></i> <span data-timer="300" data-onfinish="consequence">10:00</span></span>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <p>Beskrivelse her af konsekvenser. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    </div>
+                    <table class="table">
+                            <tbody id="consequences">
+                            </tbody>
+                        </table>
+                    <div class="panel-body hidden">
+                        <div class="alert alert-info alert-no-bottom-margin">
+                            <p>Der er ingen aktive konsekvenser</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="floating-buttons">
+            <button class="btn btn-primary btn-block" onclick="showConsequence();"><i class="glyphicon glyphicon-screenshot"></i> Kør Konsekvens</button>
+            <button class="btn btn-primary btn-block" onclick="showPowerUp();"><i class="glyphicon glyphicon-cd"></i> Kør PowerUp</button>
+            <button class="btn btn-primary btn-block" onclick="showPlate();"><i class="glyphicon glyphicon-th-large"></i> Pladen fuld</button>
+            <button class="btn btn-primary btn-block" onclick="showGiveout('consequence')"><i class="glyphicon glyphicon-screenshot"></i> Giv konsekvens</button>
+            <button class="btn btn-primary btn-block" onclick="showGiveout('powerup')"><i class="glyphicon glyphicon-cd"></i> Giv powerup</button>
+            <button class="btn btn-primary btn-block"  onclick="continueGame()"><i class="glyphicon glyphicon-play"></i> Continue</button>
+            <button class="btn btn-primary btn-block" onclick="pauseGame()"><i class="glyphicon glyphicon-pause"></i> Pause</button>
+        </div>
+        <div id="modal-powerup" class="modal fade modal-powerup" tabindex="-1">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ><span>&times;</span></button>
+                        <h4 class="modal-title">PowerUp</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <img src="/gfx/wheeloffortune.gif"/>
+                            <div class="powerUpText">
+                                <h2></h2>
+                                <div class="well"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Færdig</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="modal-consequence" class="modal fade modal-consequence" tabindex="-1">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ><span>&times;</span></button>
+                        <h4 class="modal-title">Konsekvens</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <img src="/gfx/wheeloffortune.gif"/>
+                            <div class="text">
+                                <h2></h2>
+                                <div class="well"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Færdig</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="modal-plate" class="modal fade modal-plate" tabindex="-1">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ><span>&times;</span></button>
+                        <h4 class="modal-title">Pladen<b>Fuld</b></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-xs-4">
+                                        <label class="control-label">Vælg hold</label>
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <select class="form-control" id="ModalPlateSelectedTeam"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="well" style="margin-top: 15px;">
+                                        Alle deltagere på holdet får en power up i 10 minutter. Alle pladerne skal ryddes.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Færdig</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="modal-challenge" class="modal fade modal-challenge" tabindex="-1">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" ><span>&times;</span></button>
+                        <h4 class="modal-title">Udfordring</b></h4>
+                    </div>
+                    <div class="modal-body">
+                        <h2></h2>
+                        <div class="challenge-info well"></div>
+                        <div class="countdown"><span></span></div>
+                        <div class="siametiske well" style="display: none;">
+                            <ul></ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Færdig</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hidden" data-timer="1" data-onfinish="challenge"></div>
+        <div id="modal-giveout" class="modal fade modal-giveout" tabindex="-1">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-xs-4">
+                                        <label class="control-label">Vælg deltager</label>
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <select class="form-control" id="ModalGiveOutPlayers"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Færdig</button>
+                    </div> 
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script>            
+            // TODO: Konsekvenser og powerup hvor man kan tage fra holds plade
+            // TODO: Kun én konsekvens af durationActive false af gangen. Den gamle erstattes med den nye
+            // TODO: Setup hold og detalgere
+            // TODO: Reset localstorage
+            // TODO: Restart spil
+            // TODO: Ret i konsekvenser, powerups og udfordringer
+
+
+
+
+
+
+            // Helpers
+            function fancyTimeFormat(time)
+            {   
+                // Hours, minutes and seconds
+                var hrs = ~~(time / 3600);
+                var mins = ~~((time % 3600) / 60);
+                var secs = ~~time % 60;
+
+                // Output like "1:01" or "4:03:59" or "123:03:59"
+                var ret = "";
+
+                if (hrs > 0) {
+                    ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+                }
+
+                ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+                ret += "" + secs;
+                return ret;
+            }
+
+            function replaceAll(str, find, replace) {
+                return str.replace(new RegExp(find, 'g'), replace);
+            }
+
+            var getRandomPowerUpTime = () => {
+                return _.random(2,10); 
+            }
+
+            var getRandomConsequenceTime = () => {
+                return _.random(5,15); 
+            }
+
+            var getRandomChallengeTime = () => {
+                return _.random(10,30); 
+            }
+
+            var getAllPlayersInGame = (teams) => {
+                return _.chain(teams).pluck('players').flatten().value();
+            }
+
+            var getRandomPlayerFromTeams = (teams) => {
+                const players = getAllPlayersInGame(teams);
+                return getRandomFromList(players);
+            }
+
+            const getRandomTeam = (teams) => {
+                return getRandomFromList(teams);
+            }
+
+            var getRandomPowerUp = (powerups) => {
+                return getRandomFromList(powerups);
+            }
+            var getRandomConsequence = (consequences) => {
+                return getRandomFromList(consequences);
+            }
+            var getRandomChallenges = (challenges) => {
+                return getRandomFromList(challenges);
+            }
+
+            var getRandomFromList = (list) => {
+                list = [...list, ...list, ...list, ...list, ...list, ...list, ...list, ...list];
+                return list[Math.floor(Math.random()*list.length)];
+            }
+
+            var generateDescription = (description, player, minutes, team) => {
+                description = replaceAll(description, '{player}', player || '');
+                description = replaceAll(description, '{minutes}', minutes || '');
+                description = replaceAll(description, '{team}', team || '');
+                return description;
+            }
+
+            const getRandomId = () => {
+                return Math.floor((1 + Math.random()) * 0x9999999999999).toString(16);
+            }
+
+            const getTimestamp = () => {
+                return Math.round(Date.now()/1000);
+            }
+
+
+            /// Localstorage
+            const LS_TEAMS = 'Teams';
+            const LS_POWERUPS = 'PowerUpList';
+            const LS_CONSEQUENCES = 'ConsequencesList';
+            const LS_PLAYER_POWERUPS = 'PlayerPowerUpList';
+            const LS_PLAYER_CONSEQUENCES = 'PlayerConsequencesList';
+            const LS_POWERUP_INTERVAL = 'PowerUpInterval';
+            const LS_CONSEQUENCES_INTERVAL = 'ConsequenceInterval';
+            const LS_CHALLENGES = 'ChallengeList';
+
+
+            var localGet = (key) => {
+                return JSON.parse(localStorage.getItem(key));
+            }
+            var localSet = (key, value) => {
+                localStorage.setItem(key, JSON.stringify(value));
+            }
+
+            var localAddItem = (key, rowId, player, duration, description) => {
+                duration = (duration || 0);
+
+                const timestamp = getTimestamp();
+                var item = {
+                    player: player,
+                    duration: duration,
+                    description: description,
+                    rowId: rowId,
+                    timestamp: timestamp,
+                    expires: parseInt(timestamp)+parseInt(duration)
+                }
+                var items = localGet(key) || [];
+                items.push(item);
+                localSet(key, items);
+            }
+
+
+
+
+            // GAME SETTINGS
+            var localGetPowerups = () => {
+                let powers = localGet(LS_POWERUPS);
+                if (!powers || powers.length === 0) {
+                    powers = [{"name":"Tunge ud af munden","description":"<b>{player}</b> må med denne PowerUp må på et vilkårligt tidspunkt stikke tungen ud af munden. Alle deltagere skal gøre det samme. Sidste deltager til at gøre dette får en konsekvens. <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Bustur","description":"<b>{player}</b> må med denne PowerUp på et vilkårligt tidspunkt vælge 2 andre spillere som skal spille bustur. <b>{player}</b> bestemmer selv hvem der skal gi' og hvem der skal ta' imod ;-) - <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Konge","description":"<b>{player}</b> må med denne PowerUp bestemme XXXXXXXXX. <b>{player}</b> har denne PowerUp i <b>{minutes} minutter</b>","durationActive":true},{"name":"Superman","description":"<b>{player}</b> er med denne PowerUp immun overfor alt - også konger og konsekvenser! <b>{player}</b> har denne PowerUp i <b>{minutes} minutter</b>","durationActive":true},{"name":"Superman","description":"<b>{player}</b> er med denne PowerUp immun overfor alt - også konger og konsekvenser! <b>{player}</b> har denne PowerUp i <b>{minutes} minutter</b>","durationActive":true},{"name":"Bartenderen","description":"<b>{player}</b> må give en ny drink efter eget valg til en anden deltager. <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Regelrytteren","description":"<b>{player}</b> må give en konsekvens ud til et uskyldigt offer. <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Brandmanden","description":"<b>{player}</b> må give et ordenligt skyld til en anden deltager. <b>{player}</b> bestemmer antal tårer op til en bunder. <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false},{"name":"Tyvknægten","description":"<b>{player}</b> må tage 2 genstande fra et modstanderholds plade. <br><br>Når PowerUp'en er brugt, skal denne fjernes fra oversigten.","durationActive":false}];
+                    localSet(LS_POWERUPS, powers);
+                }
+                return powers;
+            }
+            var localGetConsequences = () => {
+                let cons = localGet(LS_CONSEQUENCES);
+                if (!cons || cons.length === 0) {
+                    cons = [{"name":"Lænket makker","description":"<b>{player}</b> skal vælge en makker fra et andet hold. Makkeren skal lænkes med håndjern i <b>{minutes} minutter</b> og gøre det samme som {player}. Drikke, ryge, tisse - alt sammen.","durationActive":true},{"name":"Drik af helvedes til","description":"Førerholdet må bestemme antal tårer <b>{player}</b> af konsekvensen skal drikke - op til at bunde en genstand.","durationActive":false},{"name":"Hånd på ryggen","description":"<b>{player}</b> skal have sin primær hånd bag på ryggen i <b>{minutes} minutter</b>.","durationActive":true},{"name":"Bustur","description":"<b>{player}</b> skal have en bustur. Førerholdet må vælge hvem der skal give busturen.","durationActive":false},{"name":"Ingen tisseri mere","description":"Alle på <b>{team}</b> må ikke tisse i <b>{minutes} minutter</b>.","durationActive":true},{"name":"Drinks bytteri","description":"Alle på <b>{team}</b> skal bytte drinks. Førerholdet bestemmer hvem der skal have hvilke drinks.","durationActive":false},{"name":"Slave","description":"<b>{player}</b> skal være slave i <b>{minutes} minutter</b>. Alle andre deltagere må bede slaven om at hente nye provianter mv. - be creative ;-)","durationActive":true},{"name":"Svimmel.dk","description":"<b>{player}</b> skal rejse sig op og dreje 10 gange rundt!","durationActive":false},{"name":"Fars tvunget rygestop","description":"<b>{player}</b> må ikke ryge i <b>{minutes} minutter</b>!","durationActive":true},{"name":"Krammetid","description":"<b>{player}</b> skal gå hen til hver en deltager og enkeltvis skåle og kramme med dem.","durationActive":false},{"name":"Flyv, opsparing, flyyv...","description":"<b>{team}</b> skal fjerne 2 genstande fra deres plade.","durationActive":false}];
+                    localSet(LS_CONSEQUENCES, cons);
+                }
+                return cons;
+            }
+            var localGetTeams = () => {
+                let teams = localGet(LS_TEAMS);
+                if (!teams || teams.length === 0) {
+                    teams = [{"id":"jKLNFjlkdsfsdf", "name":"Hold 1","players":["Stefan","Dan"]},{"id":"FGHFDGHdfdsSs", "name":"Hold 2","players":["Andy","Stephanie"]},{"id":"FGHFDGHdy6htg", "name":"Hold 2","players":["ElPatron","Anja"]}];
+                    localSet(LS_TEAMS, teams);
+                }
+                return _.sortBy(teams, 'name');
+            }
+            var localGetChallenges = () => {
+                let challenges = localGet(LS_CHALLENGES);
+                if (!challenges || teams.length === 0) {
+                    challenges = [{"id":"XXXXXX1","name":"Hæld for satan!","description":"<b>{player}</b> skal bunde sin drink på inden denne tæller er færdig. Ellers er der konsekvenser!","countdown":10},{"id":"XXXXXX2","name":"Pladen skal fyldes!","description":"Alle på <b>{team}</b> skal bunde","countdown":0},{"id":"XXXXXX3","name":"Anti-telefoni","description":"Alle skal lægge deres telefoner i vindueskarmen. Konsekvenser til den sidste. Powerup til den første","countdown":0},{"id":"XXXXXX4","name":"Bottoms up","description":"<b>{player}</b> skal stå på sine hænder inden denne tæller er færdig. Må gerne hjælpes.","countdown":10},{"id":"XXXXXX5","name":"SKÅÅÅL!","description":"Så er der shots til alle!","countdown":0},{"id":"XXXXXX6","name":"Kollektiv rygepause","description":"Titlen siger sig selv, bøv!","countdown":0},{"id":"XXXXXX7","name":"Medusa!","description":"<p>Alle sidder rundt om et bord fyldt med shots.<br>Når I er klar, skal I placere panden på bordet, så I ikke kan se hinanden.<br>Tæl til tre og kig så op på samme tid.<br>I skal øjeblikkeligt stirre på en anden person.</p><p>Hvis personen, du stirrer på, kigger på en anden, er du I sikkerhed.<br>Hvis personen, du kigger på, også kigger på dig, skal du <b>råbe Medusa</b> før hende. <br><br><i>Den, der råber det sidst, tager et shot imens der findes en konsekvens frem.</i></p>","countdown":0},{"id":"XXXXXX8","name":"Grine-tid","description":"<p><b>{player}</b> skal skrive en besked som sidemanden ikke kan læse højt uden at grine.</p> <p>Konsekvens til den som fejler</p>","countdown":0},{"id":"XXXXXX9","name":"Siamesiske tvillinger","description":"<p>Nedenfor ses en liste af hvem der skal have hvilken kropsdel på hvem.<br>Det kan være nødvendigt at skifte til en ny plads.</p><p>Når nogen glider fra hinanden får den der ikke længere sidder fast til nogen en konsekvens.<p><p>De to sidste til at hænge sammen får begge en PowerUp</p><p><b> Spillet fortsætter imens denne udfordring er i gang<b></b>","countdown":0},{"id":"XXXXXX10","name":"Most likely","description":"<p><b>{player}</b> stiller et <i>most likely</i>-spørgsmål. “Hvem scorer i aften?”, “Hvem ville stjæle en kollegas cola fra køleskabet?”</p><p>Tæl til tre, og peg på den person, I mener er most likely. Man skal drikke en tår for hver person, der peger på én.</p>","countdown":0},{"id":"XXXXXX11","name":"Snurretop","description":"<b>{team}</b> op og snurre rundt 20 gange","countdown":0}];
+                    localSet(LS_CHALLENGES);
+                }
+
+                return challenges;
+            }
+
+
+            // GAME PLAY
+            var localAddPowerup = (player, rowId, duration, description) => {
+                localAddItem(LS_PLAYER_POWERUPS, rowId, player, duration, description);
+            }
+            var localAddConsequences = (player, rowId, duration, description) => {
+                localAddItem(LS_PLAYER_CONSEQUENCES, rowId, player, duration, description);
+            }
+            
+            var localGetCurrentPowerups = () => {
+                return _.sortBy(localGet(LS_PLAYER_POWERUPS) || [], 'expires');
+            }
+            var localGetCurrentConsequences = () => {
+                return _.sortBy(localGet(LS_PLAYER_CONSEQUENCES) || [], 'expires');
+            }
+
+            var localRemovePowerUp = (id) => {
+                let powers = localGetCurrentPowerups();
+                powers = _.filter(powers, (x) => { return x.rowId !== id});
+                localSet(LS_PLAYER_POWERUPS, powers);
+            }
+            var localRemoveConsequences = (id) => {
+                let cons = localGetCurrentConsequences();
+                cons = _.filter(cons, (x) => { return x.rowId !== id});
+                localSet(LS_PLAYER_CONSEQUENCES, cons);
+            }
+        </script>
+        <script>
+            const _powerUpInterval = localGet(LS_POWERUP_INTERVAL) || 600;
+            const _consequenceInterval = localGet(LS_CONSEQUENCES_INTERVAL) || 600;
+            const _teams = localGetTeams();
+            const _powerups = localGetPowerups();
+            const _consequences = localGetConsequences();
+            let _challenges = localGetChallenges();
+            let _gamePaused = false;
+
+            // GIVEOUT
+            // GIVEOUT
+            // GIVEOUT
+            // GIVEOUT
+            // GIVEOUT
+            // GIVEOUT
+            // GIVEOUT
+            const showGiveout = (type) => {
+                if (!type) return;
+                $('#modal-giveout').data('giveout-type', type);
+                $('#modal-giveout').modal('show');
+            }
+            $('#modal-giveout').on('show.bs.modal', function (event) {
+                _gamePaused = true;
+                var $modal = $(this);
+
+                let title;
+                switch($modal.data('giveout-type')) {
+                    case 'powerup': title = 'Giv PowerUp'; break;
+                    case 'consequence': title = 'Giv konsekvens'; break;
+                }
+
+
+                $modal.find('.modal-title').text(title);
+
+                $.each(getAllPlayersInGame(_teams), (i, player) => {
+                    $('#ModalGiveOutPlayers').append(`<option value="${player}"> ${player}</option>`);
+                });
+            });
+            $('#modal-giveout').on('hide.bs.modal', function (event) {
+                const chosenPlayer = $('#ModalGiveOutPlayers').val();
+                const $modal = $(this);
+                const type = $modal.data('giveout-type');
+
+                if (type === 'powerup') {
+                    showPowerUp(chosenPlayer);
+                }
+                if (type === 'consequence') {
+                    showConsequence(chosenPlayer);
+                }
+
+                $modal.data('giveout-type', '');
+                $('#ModalGiveOutPlayers').val('');
+                $('#ModalGiveOutPlayers').html('');
+                _gamePaused = false;
+            });
+
+
+
+
+
+
+
+
+            // CHALLENGE
+            // CHALLENGE
+            // CHALLENGE
+            // CHALLENGE
+            // CHALLENGE
+            // CHALLENGE
+            const showChallenge = () => {
+                $('#modal-challenge').modal('show');
+            }
+            let _challengeCountdown;
+            $('#modal-challenge').on('show.bs.modal', function (event) {
+                _gamePaused = true;
+                const $modal = $(this);
+                if (!_challenges || _challenges.length === 0) _challenges = localGetChallenges();
+                const challenge = getRandomChallenges(_challenges);
+
+                const $list = $modal.find('.siametiske ul');
+                if (challenge.id === 'XXXXXX9') {
+                    // Siametiske tvillinger
+                    let players = getAllPlayersInGame(_teams);
+                    let playersLeft = getAllPlayersInGame(_teams);
+
+                    const options = ['lillefinger','tommelfinger','knæ','albue','næse','mund','kind','skulder','hals'];
+                    const $list = $modal.find('.siametiske ul');
+                    $list.html('');
+
+                    let oppositePlayer;
+                    $.each(getAllPlayersInGame(_teams), (i, player) => {
+                        oppositePlayer = getRandomFromList(playersLeft);
+                        while (oppositePlayer === player && playersLeft.length > 1) {
+                            oppositePlayer = getRandomFromList(playersLeft);
+                            console.log('Challenge player and oppesite player are equal... trying again');
+                        }
+                        playersLeft = _.filter(playersLeft, (x) => { return oppositePlayer !== x });
+                        $list.append($('<li>').html(`${player} skal have <b>${getRandomFromList(options)}</b> på <b>${oppositePlayer}</b>`));
+                    });
+
+                    $list.parent().show();
+                }
+
+                $modal.find('h2').text(challenge.name);
+
+                const player = getRandomPlayerFromTeams(_teams);
+                const team = getRandomTeam(_teams);
+
+                const description = generateDescription(challenge.description, player, null, team.name);
+
+                $modal.find('.challenge-info').html(description); 
+
+                if (challenge.countdown) {
+                    $modal.find('.countdown span').text(challenge.countdown);
+                    clearInterval(_challengeCountdown);
+                    _challengeCountdown = setInterval(() => {
+                        const count = parseInt($modal.find('.countdown span').text())-1;
+                        if (count <= 0) clearInterval(_challengeCountdown);
+                        $modal.find('.countdown span').text(count);
+                    }, 1000);
+                } else {
+                    $modal.find('.countdown span').text('');
+                }
+
+
+                _challenges = _.filter(_challenges, (x) => { return x.id !== challenge.id});
+            });
+            $('#modal-challenge').on('hide.bs.modal', function (event) {
+                setChallengeInterval();
+                clearInterval(_challengeCountdown);
+                $(this).find('.siametiske').hide();
+                _gamePaused = false;
+            });
+            const setChallengeInterval = () => {
+                $('[data-onfinish=challenge]').data('timer', getRandomChallengeTime()*60);
+            }
+
+
+
+
+
+
+
+
+
+            // PLATE
+            // PLATE
+            // PLATE
+            // PLATE
+            // PLATE
+            // PLATE
+            const showPlate = () => {
+                $('#modal-plate').modal('show');
+            }
+            $('#modal-plate').on('show.bs.modal', function (event) {
+                _gamePaused = true;
+                var $modal = $(this);
+
+                $.each(_teams, (i, team) => {
+                    $('#ModalPlateSelectedTeam').append(`<option value="${team.id}"> ${team.name}</option>`);
+                });
+            });
+            $('#modal-plate').on('hide.bs.modal', function (event) {
+                // Power ups durations = 10 minutes
+                const chosenTeam = $('#ModalPlateSelectedTeam').val();
+
+                const players = _.filter(_teams, (team) => {
+                    return team.id == chosenTeam;
+                })[0].players;
+
+                $.each(players, (i, player) => {
+                    setTimeout(() => {
+                        const powerUp = getRandomPowerUp(_.filter(_powerups, (pw) => { return pw.durationActive; })); // Only take powerups that have a duration
+                        givePowerup(player, powerUp.durationActive ? 600 : 0, powerUp.name);
+                    }, 250);
+                });
+
+                $('#ModalPlateSelectedTeam').val('');
+                $('#ModalPlateSelectedTeam').html('');
+                _gamePaused = false;
+            });
+
+
+
+
+
+
+
+            // POWER UP
+            // POWER UP
+            // POWER UP
+            // POWER UP
+            // POWER UP
+            // POWER UP
+            const showPowerUp = (player) => {
+                if (player) $('#modal-powerup').data('player', player);
+                $('#modal-powerup').modal('show');
+            }
+
+            const givePowerup = (player, duration, description) => {
+                const id = getRandomId();
+                localAddPowerup(player, id, duration, description);
+                addHtmlPowerup(player, description, duration, id);
+            }
+
+            const addHtmlPowerup = (player, description, duration, id) => {
+                let $powerupItem = $('<tr><td class="player"></td><td class="powerup"></td><td class="text-right duration"><i class="glyphicon glyphicon-time"></i> <span data-timer></span></td></tr>');
+                $powerupItem.find('td.player').text(player);
+                $powerupItem.find('td.powerup').text(description);
+                $powerupItemDuration = $powerupItem.find('td.duration');
+                if (duration) {
+                    $powerupItemDuration.find('[data-timer]').attr({
+                        'data-timer': duration,
+                        'data-id': id,
+                        'data-onfinish': 'playerpowerup'
+                    });
+                } else {
+                    let $btn = $('<button class="btn btn-danger"><i class="glyphicon glyphicon-trash"></i></button>');
+                    $btn.attr('data-id', id);
+                    $btn.click(() => {
+                        removePlayerItem(id);
+                        localRemovePowerUp(id);
+                    });
+                    $powerupItemDuration.html($btn);
+                }
+
+                $('#powerups').append($powerupItem);
+            }
+
+            $('#modal-powerup').on('show.bs.modal', function (event) {
+                _gamePaused = true;
+                var $modal = $(this);
+                var $powerUpContainer = $modal.find('.powerUpText');
+                $powerUpContainer.hide();
+
+                const player = $modal.data('player') || getRandomPlayerFromTeams(_teams);
+                const powerUp = getRandomPowerUp(_powerups);
+                const team = getRandomTeam(_teams);
+                let powerUpDuration = getRandomPowerUpTime();
+                let powerUpDurationSec = powerUpDuration*60;
+
+                const description = generateDescription(powerUp.description, player, powerUpDuration, team.name);
+
+                $powerUpContainer.find('h2').text(player + ' får ' + powerUp.name);
+                $powerUpContainer.find('.well').html(description);
+
+                if (!powerUp.durationActive) powerUpDurationSec = null;
+                
+                setTimeout(() => {
+                    $powerUpContainer.slideDown();
+                    givePowerup(player, powerUpDurationSec, powerUp.name);
+                }, 2);
+            })
+            $('#modal-powerup').on('hide.bs.modal', function (event) {
+                $(this).data('player', '');
+                $('[data-onfinish=powerup]').data('timer', _powerUpInterval);
+                _gamePaused = false;
+            });
+
+            const removePlayerItem = (id) => {
+                $('[data-id=' + id + ']').closest('tr').remove();
+            };
+            
+            
+            
+            
+            
+            // CONSEQUENCES
+            // CONSEQUENCES
+            // CONSEQUENCES
+            // CONSEQUENCES
+            // CONSEQUENCES
+            // CONSEQUENCES
+            // CONSEQUENCES
+
+
+            const addHtmlConsequence = (player, description, duration, id) => {
+                let $item = $('<tr><td class="player"></td><td class="description"></td><td class="text-right duration"><i class="glyphicon glyphicon-time"></i> <span data-timer></span></td></tr>');
+                $item.find('td.player').text(player);
+                $item.find('td.description').text(description);
+                $itemDuration = $item.find('td.duration');
+                if (duration) {
+                    $itemDuration.find('[data-timer]').attr({
+                        'data-timer': duration,
+                        'data-id': id,
+                        'data-onfinish': 'playerconsequence'
+                    });
+                    
+                    $('#consequences').append($item);
+                }
+            }
+
+            const showConsequence = (player) => {
+                if (player) $('#modal-consequence').data('player', player);
+                $('#modal-consequence').modal('show');
+            }
+
+            $('#modal-consequence').on('show.bs.modal', function (event) {
+                _gamePaused = true;
+                var $modal = $(this);
+                var $container = $modal.find('.text');
+                $container.hide();
+
+                const player = $modal.data('player') || getRandomPlayerFromTeams(_teams);
+                const team = getRandomTeam(_teams);
+                const consequence = getRandomConsequence(_consequences);
+                let duration = getRandomConsequenceTime();
+                let durationSec = duration*60;
+
+                const description = generateDescription(consequence.description, player, duration, team.name);
+
+                $container.find('h2').text(player + ' får ' + consequence.name);
+                $container.find('.well').html(description);
+
+                if (!consequence.durationActive) durationSec = null;
+                
+                setTimeout(() => {
+                    $container.slideDown();
+                    const id = getRandomId();
+                    localAddConsequences(player, id, durationSec, consequence.name);
+                    addHtmlConsequence(player, consequence.name, durationSec, id);
+                }, 2);
+            })
+            $('#modal-consequence').on('hide.bs.modal', function (event) {
+                $(this).data('player', '');
+                $('[data-onfinish=consequence]').data('timer', _consequenceInterval);
+                _gamePaused = false;
+            });
+
+            const timerFinished = (type, id) => {
+                switch(type) {
+                    case 'powerup':
+                        showPowerUp();
+                        break;
+                    case 'consequence':
+                        showConsequence();
+                        break;
+                    case 'playerpowerup':
+                        localRemovePowerUp(id);
+                        removePlayerItem(id);
+                        break;
+                    case 'playerconsequence':
+                        localRemoveConsequences(id);
+                        removePlayerItem(id);
+                        break;
+                    case 'challenge':
+                        showChallenge();
+                        break;
+                }
+            }
+
+            const timerFunction = () => {
+                if (_gamePaused) return;
+                const $timers = $('[data-timer]');
+
+                let currentTime;
+                let $item;
+                $.each($timers, (i, item) => {
+                    $item = $(item);
+                    currentTime = parseInt($item.data('timer'));
+                    $item.data('timer', currentTime-1).text(fancyTimeFormat(currentTime));
+                    if (currentTime === 0) timerFinished($item.data('onfinish'), $item.data('id'));
+                });
+            };
+
+            
+            $(document).ready(() => {
+                setChallengeInterval();
+                let timer = setInterval(timerFunction, 1000);
+
+                const $teamContainer = $('#teams');
+                $.each(_teams, (i, team) => {
+                    const players = team.players;
+
+                    const $panel = $('<div class="panel panel-default"><div class="panel-heading"><h3 class="panel-title"></h3></div><div class="panel-body"><ol></ol></div></div>');
+
+                    $panel.find('h3.panel-title').text(team.name);
+                    $ol = $panel.find('ol');
+
+                    $.each(players, (i, player) => {
+                        $ol.append($('<li>').text(player));
+                    });
+                    
+                    $teamContainer.append($panel);
+                });
+
+                let timestamp = getTimestamp();
+                $.each(localGetCurrentConsequences(), (i, item) => {
+                    if (item.expires > timestamp) {
+                        addHtmlConsequence(item.player, item.description, parseInt(item.expires)-timestamp, item.rowId);
+                    } else {
+                        localRemoveConsequences(item.rowId);
+                    }
+                });
+                $.each(localGetCurrentPowerups(), (i, item) => {
+                    if (item.duration === 0) {
+                        addHtmlPowerup(item.player, item.description, 0, item.rowId);
+                    } else if (item.expires > timestamp) {
+                        addHtmlPowerup(item.player, item.description, parseInt(item.expires)-timestamp, item.rowId);
+                    } else {
+                        localRemovePowerUp(item.rowId);
+                    }
+                });
+            });
+
+            const pauseGame = () => { _gamePaused = true; };
+            const continueGame = () => { _gamePaused = false; };
+        </script>
+    </body>
 </html>
