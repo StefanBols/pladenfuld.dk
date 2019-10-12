@@ -50,7 +50,6 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             <span>PowerUp</span>
-                            <span class="time"><i class="glyphicon glyphicon-time"></i> <span data-timer="600" data-onfinish="powerup">10:00</span></span>
                         </h3>
                     </div>
                     <div class="panel-body">
@@ -74,7 +73,7 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             <span>Konsekvens</span>
-                            <span class="time"><i class="glyphicon glyphicon-time"></i> <span data-timer="300" data-onfinish="consequence">10:00</span></span>
+                            <span class="time"><i class="glyphicon glyphicon-time"></i> <span data-timer="600" data-onfinish="consequence">10:00</span></span>
                         </h3>
                     </div>
                     <div class="panel-body">
@@ -277,7 +276,7 @@
             }
 
             var getRandomChallengeTime = () => {
-                return _.random(10,30); 
+                return _.random(7,15); 
             }
 
             var getAllPlayersInGame = (teams) => {
@@ -382,7 +381,7 @@
             var localGetTeams = () => {
                 let teams = localGet(LS_TEAMS);
                 if (!teams || teams.length === 0) {
-                    teams = [{"id":"jKLNFjlkdsfsdf", "name":"Hold 1","players":["Stefan","Dan"]},{"id":"FGHFDGHdfdsSs", "name":"Hold 2","players":["Andy","Stephanie"]},{"id":"FGHFDGHdy6htg", "name":"Hold 2","players":["ElPatron","Anja"]}];
+                    teams = [{"id":"jKLNFjlkdsfsdf", "name":"Hold 1","players":["Stefan","Andy"]},{"id":"FGHFDGHdfdsSs", "name":"Hold 2","players":["Park","Stephanie"]},{"id":"FGHFDGHdy6htg", "name":"Hold 2","players":["ElPatron","Seb"]}];
                     localSet(LS_TEAMS, teams);
                 }
                 return _.sortBy(teams, 'name');
@@ -390,8 +389,8 @@
             var localGetChallenges = () => {
                 let challenges = localGet(LS_CHALLENGES);
                 if (!challenges || teams.length === 0) {
-                    challenges = [{"id":"XXXXXX1","name":"Hæld for satan!","description":"<b>{player}</b> skal bunde sin drink på inden denne tæller er færdig. Ellers er der konsekvenser!","countdown":10},{"id":"XXXXXX2","name":"Pladen skal fyldes!","description":"Alle på <b>{team}</b> skal bunde","countdown":0},{"id":"XXXXXX3","name":"Anti-telefoni","description":"Alle skal lægge deres telefoner i vindueskarmen. Konsekvenser til den sidste. Powerup til den første","countdown":0},{"id":"XXXXXX4","name":"Bottoms up","description":"<b>{player}</b> skal stå på sine hænder inden denne tæller er færdig. Må gerne hjælpes.","countdown":10},{"id":"XXXXXX5","name":"SKÅÅÅL!","description":"Så er der shots til alle!","countdown":0},{"id":"XXXXXX6","name":"Kollektiv rygepause","description":"Titlen siger sig selv, bøv!","countdown":0},{"id":"XXXXXX7","name":"Medusa!","description":"<p>Alle sidder rundt om et bord fyldt med shots.<br>Når I er klar, skal I placere panden på bordet, så I ikke kan se hinanden.<br>Tæl til tre og kig så op på samme tid.<br>I skal øjeblikkeligt stirre på en anden person.</p><p>Hvis personen, du stirrer på, kigger på en anden, er du I sikkerhed.<br>Hvis personen, du kigger på, også kigger på dig, skal du <b>råbe Medusa</b> før hende. <br><br><i>Den, der råber det sidst, tager et shot imens der findes en konsekvens frem.</i></p>","countdown":0},{"id":"XXXXXX8","name":"Grine-tid","description":"<p><b>{player}</b> skal skrive en besked som sidemanden ikke kan læse højt uden at grine.</p> <p>Konsekvens til den som fejler</p>","countdown":0},{"id":"XXXXXX9","name":"Siamesiske tvillinger","description":"<p>Nedenfor ses en liste af hvem der skal have hvilken kropsdel på hvem.<br>Det kan være nødvendigt at skifte til en ny plads.</p><p>Når nogen glider fra hinanden får den der ikke længere sidder fast til nogen en konsekvens.<p><p>De to sidste til at hænge sammen får begge en PowerUp</p><p><b> Spillet fortsætter imens denne udfordring er i gang<b></b>","countdown":0},{"id":"XXXXXX10","name":"Most likely","description":"<p><b>{player}</b> stiller et <i>most likely</i>-spørgsmål. “Hvem scorer i aften?”, “Hvem ville stjæle en kollegas cola fra køleskabet?”</p><p>Tæl til tre, og peg på den person, I mener er most likely. Man skal drikke en tår for hver person, der peger på én.</p>","countdown":0},{"id":"XXXXXX11","name":"Snurretop","description":"<b>{team}</b> op og snurre rundt 20 gange","countdown":0}];
-                    localSet(LS_CHALLENGES);
+                    challenges = [{"id":"XXXXXX1","name":"Hæld for satan!","description":"<b>{player}</b> skal bunde sin drink på inden denne tæller er færdig. Ellers er der konsekvenser!","countdown":10},{"id":"XXXXXX2","name":"Pladen skal fyldes!","description":"Alle på <b>{team}</b> skal bunde","countdown":0},{"id":"XXXXXX3","name":"Anti-telefoni","description":"Alle skal lægge deres telefoner i vindueskarmen. Konsekvenser til den sidste. Powerup til den første","countdown":0},{"id":"XXXXXX4","name":"Bottoms up","description":"<b>{player}</b> skal stå på sine hænder inden denne tæller er færdig. Må gerne hjælpes.","countdown":10},{"id":"XXXXXX5","name":"SKÅÅÅL!","description":"Så er der shots til alle!","countdown":0},{"id":"XXXXXX6","name":"Kollektiv rygepause","description":"Titlen siger sig selv, bøv!","countdown":0},{"id":"XXXXXX7","name":"Medusa!","description":"<p>Alle sidder rundt om et bord fyldt med shots.<br>Når I er klar, skal I placere panden på bordet, så I ikke kan se hinanden.<br>Tæl til tre og kig så op på samme tid.<br>I skal øjeblikkeligt stirre på en anden person.</p><p>Hvis personen, du stirrer på, kigger på en anden, er du I sikkerhed.<br>Hvis personen, du kigger på, også kigger på dig, skal du <b>råbe Medusa</b> før hende. <br><br><i>Den, der råber det sidst, tager et shot imens der findes en konsekvens frem.</i></p>","countdown":0},{"id":"XXXXXX8","name":"Grine-tid","description":"<p><b>{player}</b> skal skrive en besked som sidemanden ikke kan læse højt uden at grine.</p> <p>Konsekvens til den som fejler</p>","countdown":0},{"id":"XXXXXX9","name":"Siamesiske tvillinger","description":"<p>Nedenfor ses en liste af hvem der skal have hvilken kropsdel på hvem.<br>Det kan være nødvendigt at skifte til en ny plads.</p><p>Når nogen glider fra hinanden får den der ikke længere sidder fast til nogen en konsekvens.<p><p>De to sidste til at hænge sammen får begge en PowerUp</p><p><b> Spillet fortsætter imens denne udfordring er i gang<b></b>","countdown":0},{"id":"XXXXXX10","name":"Most likely","description":"<p><b>{player}</b> stiller et <i>most likely</i>-spørgsmål. “Hvem scorer i aften?”, “Hvem ville stjæle en kollegas cola fra køleskabet?”</p><p>Tæl til tre, og peg på den person, I mener er most likely. Man skal drikke en tår for hver person, der peger på én.</p>","countdown":0},{"id":"XXXXXX11","name":"Snurretop","description":"<b>{team}</b> op og snurre rundt 20 gange","countdown":0},{"id":"XXXXXX12","name":"Wannabe øl staffet","description":"<p><b>Èn spiller</b> fra hvert hold skal rejse sig op og snurre 10 gange og løbe til den nærmeste håndvask og tilbage igen.</p><p>Man er først tilbage når man rører bordet man sidder ved</p><p><b>Go, go, go, go!!!!</b></p>","countdown":30},{"id":"XXXXXX13","name":"Så er det i militæret","description":"<p><b>Èn spiller</b> fra hvert hold skal tage 10 armbøjninger.</p><p>Den første til at gennemføre får en PowerUp, sidste en konsekvens</p>","countdown":0}];
+                    localSet(LS_CHALLENGES, challenges);
                 }
 
                 return challenges;
